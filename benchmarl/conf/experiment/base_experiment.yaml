@@ -26,6 +26,8 @@ gamma: 0.99
 lr: 0.00005
 # The epsilon parameter of the adam optimizer
 adam_eps: 0.000001
+# Extra kwargs for the adam optimizer
+adam_extra_kwargs: {}
 # Clips grad norm if true and clips grad value if false
 clip_grad_norm: True
 # The value for the clipping, if null no clipping
@@ -95,11 +97,18 @@ evaluation_interval: 120_000
 evaluation_episodes: 1
 # If True, when stochastic policies are evaluated, their deterministic value is taken, otherwise, if False, they are sampled
 evaluation_deterministic_actions: True
+# If True, seed the environment before evaluation leading to always the same evaluation env being used
+# If False, evaluation environments will be more random throughout training
+evaluation_static: False
 
 # List of loggers to use, options are: wandb, csv, tensorboard, mflow
-loggers: [csv]
-# Wandb project name
+loggers: [csv,wandb]
+# Wandb project name (kept for backward compatibility)
 project_name: "benchmarl"
+# Wandb extra kwargs passed to the WandbLogger (~superset of wandb.init kwargs)
+# WandbLogger includes: offline, save_dir, project, video_fps
+# wandb.init includes: entity, tags, notes, etc.
+wandb_extra_kwargs: {}
 # Create a json folder as part of the output in the format of marl-eval
 create_json: True
 

@@ -39,7 +39,12 @@ from benchmarl.experiment.callback import Callback, CallbackNotifier
 from benchmarl.experiment.logger import Logger
 from benchmarl.models import GnnConfig, SequenceModelConfig
 from benchmarl.models.common import ModelConfig
-from benchmarl.utils import _add_rnn_transforms, _read_yaml_config, seed_everything
+from benchmarl.utils import (
+    _add_rnn_transforms,
+    _read_yaml_config,
+    local_seed,
+    seed_everything,
+)
 
 _has_hydra = importlib.util.find_spec("hydra") is not None
 if _has_hydra:
@@ -68,6 +73,7 @@ class ExperimentConfig:
     gamma: float = MISSING
     lr: float = MISSING
     adam_eps: float = MISSING
+    adam_extra_kwargs: Dict[str, Any] = MISSING
     clip_grad_norm: bool = MISSING
     clip_grad_val: Optional[float] = MISSING
 
@@ -102,9 +108,11 @@ class ExperimentConfig:
     evaluation_interval: int = MISSING
     evaluation_episodes: int = MISSING
     evaluation_deterministic_actions: bool = MISSING
+    evaluation_static: bool = MISSING
 
     loggers: List[str] = MISSING
     project_name: str = MISSING
+    wandb_extra_kwargs: Dict[str, Any] = MISSING
     create_json: bool = MISSING
 
     save_folder: Optional[str] = MISSING
@@ -517,7 +525,10 @@ class Experiment(CallbackNotifier):
         self.optimizers = {
             group: {
                 loss_name: torch.optim.Adam(
-                    params, lr=self.config.lr, eps=self.config.adam_eps
+                    params,
+                    lr=self.config.lr,
+                    eps=self.config.adam_eps,
+                    **self.config.adam_extra_kwargs,
                 )
                 for loss_name, params in self.algorithm.get_parameters(group).items()
             }
@@ -604,8 +615,22 @@ class Experiment(CallbackNotifier):
             pickle.dump(self.callbacks, f)
 
     def _setup_logger(self):
+        hparams_kwargs = {
+            "critic_model_name": self.critic_model_name,
+            "experiment_config": self.config.__dict__,
+            "algorithm_config": self.algorithm_config.__dict__,
+            "model_config": self.model_config.__dict__,
+            "critic_model_config": self.critic_model_config.__dict__,
+            "task_config": self.task.config,
+            "continuous_actions": self.continuous_actions,
+            "on_policy": self.on_policy,
+            "algorithm_name": self.algorithm_name,
+            "model_name": self.model_name,
+            "task_name": self.task_name,
+            "environment_name": self.environment_name,
+            "seed": self.seed,
+        }
         self.logger = Logger(
-            project_name=self.config.project_name,
             experiment_name=self.name,
             folder_name=str(self.folder_name),
             experiment_config=self.config,
@@ -615,17 +640,13 @@ class Experiment(CallbackNotifier):
             task_name=self.task_name,
             group_map=self.group_map,
             seed=self.seed,
+            project_name=self.config.project_name,
+            wandb_extra_kwargs={
+                **self.config.wandb_extra_kwargs,
+                "config": hparams_kwargs,
+            },
         )
-        self.logger.log_hparams(
-            critic_model_name=self.critic_model_name,
-            experiment_config=self.config.__dict__,
-            algorithm_config=self.algorithm_config.__dict__,
-            model_config=self.model_config.__dict__,
-            critic_model_config=self.critic_model_config.__dict__,
-            task_config=self.task.config,
-            continuous_actions=self.continuous_actions,
-            on_policy=self.on_policy,
-        )
+        self.logger.log_hparams(**hparams_kwargs)
 
     def run(self):
         """Run the experiment until completion."""
@@ -861,8 +882,18 @@ class Experiment(CallbackNotifier):
 
         return float(total_norm)
 
+    @local_seed()
     @torch.no_grad()
     def _evaluation_loop(self):
+        if self.config.evaluation_static:
+            seed_everything(self.seed)
+            try:
+                self.test_env.set_seed(self.seed)
+            except NotImplementedError:
+                warnings.warn(
+                    "`experiment.evaluation_static` set to true but the environment does not allow to set seeds."
+                    "Static evaluation is not guaranteed."
+                )
         evaluation_start = time.time()
         with set_exploration_type(
             ExplorationType.DETERMINISTIC
@@ -979,7 +1010,9 @@ class Experiment(CallbackNotifier):
         return self
 
     @staticmethod
-    def reload_from_file(restore_file: str) -> Experiment:
+    def reload_from_file(
+        restore_file: str, experiment_patch: Optional[Dict[str, Any]] = None
+    ) -> Experiment:
         """
         Restores the experiment from the checkpoint file.
 
@@ -989,6 +1022,7 @@ class Experiment(CallbackNotifier):
 
         Args:
             restore_file (str): The checkpoint file (.pt) of the experiment reload.
+            experiment_patch (Optional[Dict[str, Any]]): The patch to apply to the experiment config.
 
         Returns:
             The reloaded experiment.
@@ -1009,6 +1043,11 @@ class Experiment(CallbackNotifier):
             callbacks = pickle.load(f)
         task.config = task_config
         experiment_config.restore_file = restore_file
+        if experiment_patch is not None:
+            for key, value in experiment_patch.items():
+                if not hasattr(experiment_config, key):
+                    raise ValueError(f"Experiment config does not have attribute {key}")
+                setattr(experiment_config, key, value)
         experiment = Experiment(
             task=task,
             algorithm_config=algorithm_config,

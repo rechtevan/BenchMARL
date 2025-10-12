@@ -8,7 +8,7 @@ import benchmarl_sphinx_theme
 # -- Project information
 
 project = "BenchMARL"
-copyright = "Meta"
+copyright = "Meta Platforms, Inc"
 author = "Matteo Bettini"
 version = benchmarl.__version__
 
@@ -52,7 +52,10 @@ html_logo = (
     "https://raw.githubusercontent.com/matteobettini/benchmarl_sphinx_theme/master/benchmarl"
     "_sphinx_theme/static/img/benchmarl_logo.png"
 )
-html_theme_options = {"logo_only": True, "navigation_depth": 2}
+html_theme_options = {
+    "logo_only": True,
+    "navigation_depth": 2,
+}
 # html_favicon = ('')
 html_css_files = [
     "css/mytheme.css",
