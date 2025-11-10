@@ -15,8 +15,8 @@ coverage:
   status:
     project:
       default:
-        target: 80%
-        threshold: 2%  # Allow 2% drop in coverage
+        target: 90%
+        threshold: 1.5%  # Allow 1.5% drop in coverage
         if_ci_failed: error
         informational: false
         only_pulls: false
@@ -62,7 +62,7 @@ component_management:
   default_rules:
     statuses:
       - type: project
-        target: 80%
+        target: 90%
 
   individual_components:
     # Core algorithm implementations should have high coverage
@@ -73,8 +73,8 @@ component_management:
       rules:
         statuses:
           - type: project
-            target: 85%
-            threshold: 3%
+            target: 90%
+            threshold: 2%
 
     # Model implementations should have high coverage
     - component_id: models
@@ -84,8 +84,8 @@ component_management:
       rules:
         statuses:
           - type: project
-            target: 85%
-            threshold: 3%
+            target: 90%
+            threshold: 2%
 
     # Experiment and core logic should have high coverage
     - component_id: experiment
@@ -95,8 +95,8 @@ component_management:
       rules:
         statuses:
           - type: project
-            target: 85%
-            threshold: 3%
+            target: 90%
+            threshold: 2%
 
     # Environment wrappers can have lower coverage due to external dependencies
     - component_id: environments
@@ -106,8 +106,8 @@ component_management:
       rules:
         statuses:
           - type: project
-            target: 70%
-            threshold: 5%
+            target: 80%
+            threshold: 3%
             informational: true
 
     # Utility and helper code
@@ -118,5 +118,5 @@ component_management:
       rules:
         statuses:
           - type: project
-            target: 75%
-            threshold: 5%
+            target: 90%
+            threshold: 2%

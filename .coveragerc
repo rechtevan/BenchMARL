@@ -68,7 +68,6 @@ output = .local/coverage/coverage.xml
 
 # Coverage targets for core modules
 # These are informational and enforced through CI checks
-# Core algorithms should maintain 80-90% coverage
-# Core models should maintain 80-90% coverage
-# Core experiment code should maintain 80-90% coverage
-# Environment wrappers can have lower coverage (60-70%) due to external dependencies
+# Overall target: 90% coverage
+# Core modules (algorithms, models, experiment, utils): 90% minimum
+# Environment wrappers: 80% minimum (lower priority due to external dependencies)

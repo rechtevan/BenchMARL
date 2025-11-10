@@ -53,11 +53,14 @@ BenchMARL follows a structured approach to code quality with automated tooling a
 
 **Testing strategy:**
 
-- Target: 80-90% coverage for core functionality
-- **Core code (high coverage required):**
+- Target: 90% overall coverage / 80% minimum for all modules
+- **Core code (90% coverage required):**
   - `benchmarl/algorithms/` - Training algorithms
   - `benchmarl/models/` - Neural network architectures
   - `benchmarl/experiment/` - Experiment orchestration
+  - `benchmarl/*.py` - Core utilities
+- **Environment wrappers (80% minimum):**
+  - `benchmarl/environments/` - Lower priority due to external dependencies
 - **Excluded from coverage targets:**
   - Visualization and plotting code
   - `examples/` directory
@@ -318,10 +321,14 @@ pytest test/ --cov=benchmarl/algorithms --cov=benchmarl/models --cov=benchmarl/e
 
 **Coverage targets:**
 
-- **Core code (80-90% coverage required):**
+- **Overall target: 90% coverage**
+- **Core modules (90% minimum required):**
   - `benchmarl/algorithms/` - All algorithm implementations
   - `benchmarl/models/` - Neural network architectures
   - `benchmarl/experiment/` - Experiment orchestration and training loops
+  - `benchmarl/*.py` - Core utilities
+- **Environment wrappers (80% minimum):**
+  - `benchmarl/environments/` - Lower priority due to external dependencies
 - **Excluded from coverage requirements:**
   - Visualization/plotting code
   - `examples/` directory
@@ -518,11 +525,14 @@ Tests use pytest fixtures from `test/conftest.py`:
 
 **Coverage requirements:**
 
-- **Target: 80-90% coverage for core functionality**
-- **Core modules (high priority):**
+- **Overall target: 90% coverage**
+- **Core modules (90% minimum required):**
   - `benchmarl/algorithms/` - Algorithm implementations and loss functions
   - `benchmarl/models/` - Neural network architectures and forward passes
   - `benchmarl/experiment/` - Training loops, checkpointing, evaluation
+  - `benchmarl/*.py` - Core utilities
+- **Environment wrappers (80% minimum):**
+  - `benchmarl/environments/` - Lower priority due to external dependencies
 - **Excluded from coverage targets:**
   - Plotting and visualization utilities
   - `examples/` directory (example scripts)
