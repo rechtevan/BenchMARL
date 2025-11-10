@@ -15,6 +15,16 @@ from benchmarl.utils import DEVICE_TYPING
 
 
 class VmasClass(TaskClass):
+    """Task class for Vectorized Multi-Agent System (VMAS) environments.
+
+    VMAS is a vectorized 2D physics simulator for multi-agent reinforcement learning,
+    designed for efficient parallel execution on GPU. Supports a wide variety of tasks
+    including navigation, transport, flocking, and multi-agent particle environments (MPE).
+
+    The environment supports both continuous and discrete actions, and can run thousands
+    of parallel environments efficiently. Does not provide global state by default.
+    """
+
     def get_env_fun(
         self,
         num_envs: int,

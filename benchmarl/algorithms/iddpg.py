@@ -4,7 +4,7 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Dict, Iterable, Tuple, Type
 
 from tensordict import TensorDictBase
@@ -36,7 +36,7 @@ class Iddpg(Algorithm):
         loss_function: str,
         delay_value: bool,
         use_tanh_mapping: bool,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
 

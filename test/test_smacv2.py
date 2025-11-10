@@ -5,13 +5,12 @@
 #
 
 import pytest
+from utils import _has_smacv2
 
-from benchmarl.algorithms import algorithm_config_registry, MappoConfig, QmixConfig
+from benchmarl.algorithms import MappoConfig, QmixConfig, algorithm_config_registry
 from benchmarl.algorithms.common import AlgorithmConfig
 from benchmarl.environments import Smacv2Task
 from benchmarl.experiment import Experiment
-
-from utils import _has_smacv2
 
 
 @pytest.mark.skipif(not _has_smacv2, reason="SMACv2 not found")

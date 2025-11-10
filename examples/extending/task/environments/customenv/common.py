@@ -6,14 +6,13 @@
 
 from typing import Callable, Dict, List, Optional
 
-from benchmarl.environments.common import Task, TaskClass
-from benchmarl.utils import DEVICE_TYPING
-
 from tensordict import TensorDictBase
-
 from torchrl.data import CompositeSpec
 from torchrl.envs import EnvBase
 from torchrl.envs.libs import YourTorchRLEnvConstructor
+
+from benchmarl.environments.common import Task, TaskClass
+from benchmarl.utils import DEVICE_TYPING
 
 
 class CustomEnvTask(Task):
@@ -36,14 +35,16 @@ class CustomEnvClass(TaskClass):
         seed: Optional[int],
         device: DEVICE_TYPING,
     ) -> Callable[[], EnvBase]:
-        return lambda: YourTorchRLEnvConstructor(
-            scenario=self.name.lower(),
-            num_envs=num_envs,  # Number of vectorized envs (do not use this param if the env is not vectorized)
-            continuous_actions=continuous_actions,  # Ignore this param if your env does not have this choice
-            seed=seed,
-            device=device,
-            categorical_actions=True,  # If your env has discrete actions, they need to be categorical (TorchRL can help with this)
-            **self.config,  # Pass the loaded config (this is what is in your yaml
+        return (
+            lambda: YourTorchRLEnvConstructor(
+                scenario=self.name.lower(),
+                num_envs=num_envs,  # Number of vectorized envs (do not use this param if the env is not vectorized)
+                continuous_actions=continuous_actions,  # Ignore this param if your env does not have this choice
+                seed=seed,
+                device=device,
+                categorical_actions=True,  # If your env has discrete actions, they need to be categorical (TorchRL can help with this)
+                **self.config,  # Pass the loaded config (this is what is in your yaml
+            )
         )
 
     def supports_continuous_actions(self) -> bool:

@@ -4,17 +4,17 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Dict, Iterable, Tuple, Type
-
-from benchmarl.algorithms.common import Algorithm, AlgorithmConfig
-from benchmarl.models.common import ModelConfig
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule, TensorDictSequential
 from torchrl.data import CompositeSpec, UnboundedContinuousTensorSpec
 from torchrl.modules import EGreedyModule, QValueModule
 from torchrl.objectives import DQNLoss, LossModule, ValueEstimators
+
+from benchmarl.algorithms.common import Algorithm, AlgorithmConfig
+from benchmarl.models.common import ModelConfig
 
 
 class CustomAlgorithm(Algorithm):

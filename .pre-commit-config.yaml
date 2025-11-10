@@ -1,29 +1,49 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v5.0.0
     hooks:
       - id: check-docstring-first
+        types: [python]
       - id: check-toml
+        types: [toml]
       - id: check-yaml
+        types: [yaml]
         exclude: packaging/.*
       - id: mixed-line-ending
         args: [--fix=lf]
       - id: end-of-file-fixer
+        types: [text]
+      - id: trailing-whitespace
+        types: [text]
 
-  - repo: https://github.com/omnilib/ufmt
-    rev: v2.0.0b2
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
     hooks:
-      - id: ufmt
-        additional_dependencies:
-          - black == 22.3.0
-          - usort == 1.0.3
-          - libcst == 0.4.7
+      - id: ruff
+        types: [python]
+        args: [--fix]
+      - id: ruff-format
+        types: [python]
 
-  - repo: https://github.com/pycqa/flake8
-    rev: 4.0.1
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
     hooks:
-      - id: flake8
-        args: [--config=setup.cfg]
+      - id: mypy
+        types: [python]
+        args: [--ignore-missing-imports, --no-strict-optional]
+        additional_dependencies: []
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.21
+    hooks:
+      - id: mdformat
+        types: [markdown]
         additional_dependencies:
-          - flake8-bugbear==22.10.27
-          - flake8-comprehensions==3.10.1
+          - mdformat-gfm
+          - mdformat-black
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.16.0
+    hooks:
+      - id: markdownlint-cli2
+        types: [markdown]

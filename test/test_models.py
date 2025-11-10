@@ -9,14 +9,12 @@ from typing import List
 import pytest
 import torch
 import torch_geometric.nn
+from hydra import compose, initialize
+from torchrl.data.tensor_specs import Composite, Unbounded
 
 from benchmarl.hydra_config import load_model_config_from_hydra
 from benchmarl.models import GnnConfig, model_config_registry
-
-from benchmarl.models.common import output_has_agent_dim, SequenceModelConfig
-from hydra import compose, initialize
-
-from torchrl.data.tensor_specs import Composite, Unbounded
+from benchmarl.models.common import SequenceModelConfig, output_has_agent_dim
 
 
 def _get_input_and_output_specs(
@@ -31,7 +29,6 @@ def _get_input_and_output_specs(
     y=12,
     set_size=5,
 ):
-
     if model_name == "cnn":
         multi_agent_input_shape = (n_agents, x, y, in_features)
         single_agent_input_shape = (x, y, in_features)
@@ -401,7 +398,6 @@ class TestDeepsets:
         in_features=4,
         out_features=2,
     ):
-
         torch.manual_seed(0)
 
         config = model_config_registry[model_name].get_from_yaml()
@@ -468,7 +464,6 @@ class TestMlp:
         n_agents=3,
         out_features=2,
     ):
-
         torch.manual_seed(0)
 
         config = model_config_registry[model_name].get_from_yaml()
@@ -532,7 +527,6 @@ class TestMlp:
         n_agents=3,
         out_features=2,
     ):
-
         torch.manual_seed(0)
 
         config = model_config_registry[model_name].get_from_yaml()

@@ -7,31 +7,27 @@
 from __future__ import annotations
 
 import abc
-
 import importlib
-
 import warnings
 from abc import abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Type
+from typing import Any, Callable
 
 from tensordict import TensorDictBase
 from torch import Tensor
-
 from torchrl.data import Composite
 from torchrl.envs import EnvBase, RewardSum, Transform
 
-from benchmarl.utils import _read_yaml_config, DEVICE_TYPING
+from benchmarl.utils import DEVICE_TYPING, _read_yaml_config
 
 
 def _type_check_task_config(
     environemnt_name: str,
     task_name: str,
-    config: Dict[str, Any],
+    config: dict[str, Any],
     warn_on_missing_dataclass: bool = True,
 ):
-
     task_config_class = _get_task_config_class(environemnt_name, task_name)
 
     if task_config_class is not None:
@@ -39,7 +35,8 @@ def _type_check_task_config(
     else:
         if warn_on_missing_dataclass:
             warnings.warn(
-                "TaskConfig python dataclass not found, task is being loaded without type checks"
+                "TaskConfig python dataclass not found, task is being loaded without type checks",
+                stacklevel=2,
             )
         return config
 
@@ -55,8 +52,7 @@ def _get_task_config_class(environemnt_name: str, task_name: str):
 
 
 class TaskClass(abc.ABC):
-    """
-    The class associated with an environment.
+    """The class associated with an environment.
 
     This class contains the logic on how to construct tasks for a specific environment.
 
@@ -71,7 +67,7 @@ class TaskClass(abc.ABC):
 
     """
 
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str, config: dict[str, Any]):
         self.name = name
         if config is None:
             config = {}
@@ -82,11 +78,10 @@ class TaskClass(abc.ABC):
         self,
         num_envs: int,
         continuous_actions: bool,
-        seed: Optional[int],
+        seed: int | None,
         device: DEVICE_TYPING,
     ) -> Callable[[], EnvBase]:
-        """
-        This function is used to obtain a TorchRL object from the enum Task.
+        """This function is used to obtain a TorchRL object from the enum Task.
 
         Args:
             num_envs (int): The number of envs that should be in the batch_size of the returned env.
@@ -105,24 +100,23 @@ class TaskClass(abc.ABC):
 
     @abstractmethod
     def supports_continuous_actions(self) -> bool:
-        """
-        Return true if your task supports continuous actions.
-        If true, self.get_env_fun might be called with continuous_actions=True
+        """Return true if your task supports continuous actions.
+
+        If true, self.get_env_fun might be called with continuous_actions=True.
         """
         raise NotImplementedError
 
     @abstractmethod
     def supports_discrete_actions(self) -> bool:
-        """
-        Return true if your task supports discrete actions.
-        If true, self.get_env_fun might be called with continuous_actions=False
+        """Return true if your task supports discrete actions.
+
+        If true, self.get_env_fun might be called with continuous_actions=False.
         """
         raise NotImplementedError
 
     @abstractmethod
     def max_steps(self, env: EnvBase) -> int:
-        """
-        The maximum number of steps allowed in an evaluation rollout.
+        """The maximum number of steps allowed in an evaluation rollout.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -132,8 +126,7 @@ class TaskClass(abc.ABC):
 
     @abstractmethod
     def has_render(self, env: EnvBase) -> bool:
-        """
-        If env.render() should be called on the environment
+        """If env.render() should be called on the environment.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -142,9 +135,9 @@ class TaskClass(abc.ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def group_map(self, env: EnvBase) -> Dict[str, List[str]]:
-        """
-        The group_map mapping agents groups to agent names.
+    def group_map(self, env: EnvBase) -> dict[str, list[str]]:
+        """The group_map mapping agents groups to agent names.
+
         This should be reelected in the TensorDicts coming from the environment where
         agent data is supposed to be stacked according to this.
 
@@ -156,8 +149,8 @@ class TaskClass(abc.ABC):
 
     @abstractmethod
     def observation_spec(self, env: EnvBase) -> Composite:
-        """
-        A spec for the observation.
+        """A spec for the observation.
+
         Must be a Composite with as many entries as needed nested under the ``group_name`` key.
 
         Args:
@@ -188,9 +181,9 @@ class TaskClass(abc.ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def info_spec(self, env: EnvBase) -> Optional[Composite]:
-        """
-        A spec for the info.
+    def info_spec(self, env: EnvBase) -> Composite | None:
+        """A spec for the info.
+
         If provided, must be a Composite with one (group_name, "info") entry per group (this entry can be composite).
 
 
@@ -201,9 +194,9 @@ class TaskClass(abc.ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def state_spec(self, env: EnvBase) -> Optional[Composite]:
-        """
-        A spec for the state.
+    def state_spec(self, env: EnvBase) -> Composite | None:
+        """A spec for the state.
+
         If provided, must be a Composite with one entry.
 
         Args:
@@ -214,8 +207,8 @@ class TaskClass(abc.ABC):
 
     @abstractmethod
     def action_spec(self, env: EnvBase) -> Composite:
-        """
-        A spec for the action.
+        """A spec for the action.
+
         If provided, must be a Composite with one (group_name, "action") entry per group.
 
         Args:
@@ -225,9 +218,9 @@ class TaskClass(abc.ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def action_mask_spec(self, env: EnvBase) -> Optional[Composite]:
-        """
-        A spec for the action mask.
+    def action_mask_spec(self, env: EnvBase) -> Composite | None:
+        """A spec for the action mask.
+
         If provided, must be a Composite with one (group_name, "action_mask") entry per group.
 
         Args:
@@ -239,15 +232,13 @@ class TaskClass(abc.ABC):
     @staticmethod
     @abstractmethod
     def env_name() -> str:
-        """
-        The name of the environment in the ``benchmarl/conf/task`` folder
-        """
+        """The name of the environment in the ``benchmarl/conf/task`` folder."""
         raise NotImplementedError
 
     @staticmethod
-    def log_info(batch: TensorDictBase) -> Dict[str, float]:
-        """
-        Return a str->float dict with extra items to log.
+    def log_info(batch: TensorDictBase) -> dict[str, float]:
+        """Return a str->float dict with extra items to log.
+
         This function has access to the collected batch and is optional.
 
         Args:
@@ -257,8 +248,7 @@ class TaskClass(abc.ABC):
         return {}
 
     def get_reward_sum_transform(self, env: EnvBase) -> Transform:
-        """
-        Returns the RewardSum transform for the environment
+        """Returns the RewardSum transform for the environment.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -269,9 +259,8 @@ class TaskClass(abc.ABC):
             reset_keys = env.reset_keys
         return RewardSum(reset_keys=reset_keys)
 
-    def get_env_transforms(self, env: EnvBase) -> List[Transform]:
-        """
-        Returns a list of :class:`torchrl.envs.Transform` to be applied to the env.
+    def get_env_transforms(self, env: EnvBase) -> list[Transform]:
+        """Returns a list of :class:`torchrl.envs.Transform` to be applied to the env.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -280,10 +269,10 @@ class TaskClass(abc.ABC):
         """
         return []
 
-    def get_replay_buffer_transforms(self, env: EnvBase, group: str) -> List[Transform]:
-        """
-        Returns a list of :class:`torchrl.envs.Transform` to be applied to the :class:`torchrl.data.ReplayBuffer`
-        of the specified group.
+    def get_replay_buffer_transforms(self, env: EnvBase, group: str) -> list[Transform]:
+        """Returns a list of :class:`torchrl.envs.Transform` to be applied to the :class:`torchrl.data.ReplayBuffer`.
+
+        Of the specified group.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -294,8 +283,7 @@ class TaskClass(abc.ABC):
 
     @staticmethod
     def render_callback(experiment, env: EnvBase, data: TensorDictBase) -> Tensor:
-        """
-        The render callback function for the enviornment.
+        """The render callback function for the enviornment.
 
         This function is called at every step during evaluation to provide pixels for rendering.
 
@@ -352,22 +340,17 @@ class Task(Enum):
     """
 
     @staticmethod
-    def associated_class() -> Type[TaskClass]:
-        """
-        The associated task class
-        """
+    def associated_class() -> type[TaskClass]:
+        """The associated task class."""
         raise NotImplementedError
 
     @classmethod
     def env_name(cls) -> str:
-        """
-        The name of the environment in the ``benchmarl/conf/task`` folder
-        """
+        """The name of the environment in the ``benchmarl/conf/task`` folder."""
         return cls.associated_class().env_name()
 
-    def get_task(self, config: Optional[Dict[str, Any]] = None) -> TaskClass:
-        """
-        Get the :class:`TaskClass` object associated with this enum element by passing it the task name and config.
+    def get_task(self, config: dict[str, Any] | None = None) -> TaskClass:
+        """Get the :class:`TaskClass` object associated with this enum element by passing it the task name and config.
 
         If no config is given, it will be loaded from ``benchmarl/conf/task/self.env_name()/self.name`` using :meth:`Task.get_from_yaml`.
 
@@ -390,13 +373,12 @@ class Task(Enum):
         return obj
 
     @staticmethod
-    def _load_from_yaml(name: str) -> Dict[str, Any]:
+    def _load_from_yaml(name: str) -> dict[str, Any]:
         yaml_path = Path(__file__).parent.parent / "conf" / "task" / f"{name}.yaml"
         return _read_yaml_config(str(yaml_path.resolve()))
 
-    def get_from_yaml(self, path: Optional[str] = None) -> TaskClass:
-        """
-        Load the task configuration from yaml
+    def get_from_yaml(self, path: str | None = None) -> TaskClass:
+        """Load the task configuration from yaml.
 
         Args:
             path (str, optional): The full path of the yaml file to load from. If None, it will default to
@@ -425,7 +407,7 @@ class Task(Enum):
             "Task.config is deprecated, use Task.get_task().config instead"
         )
 
-    def update_config(self, config: Dict[str, Any]) -> Task:
+    def update_config(self, config: dict[str, Any]) -> Task:
         raise ValueError(
             "Task.update_config is deprecated please use Task.get_task().config.update() instead"
         )
@@ -450,7 +432,7 @@ class Task(Enum):
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
-    def group_map(self, env: EnvBase) -> Dict[str, List[str]]:
+    def group_map(self, env: EnvBase) -> dict[str, list[str]]:
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
@@ -460,12 +442,12 @@ class Task(Enum):
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
-    def info_spec(self, env: EnvBase) -> Optional[Composite]:
+    def info_spec(self, env: EnvBase) -> Composite | None:
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
-    def state_spec(self, env: EnvBase) -> Optional[Composite]:
+    def state_spec(self, env: EnvBase) -> Composite | None:
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
@@ -475,13 +457,13 @@ class Task(Enum):
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
-    def action_mask_spec(self, env: EnvBase) -> Optional[Composite]:
+    def action_mask_spec(self, env: EnvBase) -> Composite | None:
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     @staticmethod
-    def log_info(batch: TensorDictBase) -> Dict[str, float]:
+    def log_info(batch: TensorDictBase) -> dict[str, float]:
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
@@ -491,12 +473,12 @@ class Task(Enum):
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
-    def get_env_transforms(self, env: EnvBase) -> List[Transform]:
+    def get_env_transforms(self, env: EnvBase) -> list[Transform]:
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
-    def get_replay_buffer_transforms(self, env: EnvBase, group: str) -> List[Transform]:
+    def get_replay_buffer_transforms(self, env: EnvBase, group: str) -> list[Transform]:
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )

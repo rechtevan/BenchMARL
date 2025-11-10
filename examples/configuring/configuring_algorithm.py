@@ -9,8 +9,8 @@ from benchmarl.environments import VmasTask
 from benchmarl.experiment import Experiment, ExperimentConfig
 from benchmarl.models.mlp import MlpConfig
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     # Loads from "benchmarl/conf/algorithm/masac.yaml"
     algorithm_config = MasacConfig.get_from_yaml()
 

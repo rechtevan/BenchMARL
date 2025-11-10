@@ -6,11 +6,12 @@
 import importlib
 
 import pytest
+from torch import nn
 
 from benchmarl.experiment import ExperimentConfig
 from benchmarl.models import CnnConfig, GnnConfig, GruConfig, LstmConfig, MlpConfig
 from benchmarl.models.common import ModelConfig, SequenceModelConfig
-from torch import nn
+
 
 _has_torch_geometric = importlib.util.find_spec("torch_geometric") is not None
 if _has_torch_geometric:
@@ -99,7 +100,6 @@ def mlp_gnn_sequence_config() -> ModelConfig:
 
 @pytest.fixture
 def cnn_gnn_sequence_config() -> ModelConfig:
-
     return SequenceModelConfig(
         model_configs=[
             CnnConfig(

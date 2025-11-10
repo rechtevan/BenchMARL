@@ -9,16 +9,16 @@ from __future__ import annotations
 import importlib
 import inspect
 import warnings
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from math import prod
-from typing import List, Optional, Type
 
 import torch
 from tensordict import TensorDictBase
-from tensordict.utils import _unravel_key_to_tuple, NestedKey
-from torch import nn, Tensor
+from tensordict.utils import NestedKey, _unravel_key_to_tuple
+from torch import Tensor, nn
 
 from benchmarl.models.common import Model, ModelConfig
+
 
 _has_torch_geometric = importlib.util.find_spec("torch_geometric") is not None
 if _has_torch_geometric:
@@ -26,7 +26,7 @@ if _has_torch_geometric:
     from torch_geometric.transforms import BaseTransform
 
     class _RelVel(BaseTransform):
-        """Transform that reads graph.vel and writes node1.vel - node2.vel in the edge attributes"""
+        """Transform that reads graph.vel and writes node1.vel - node2.vel in the edge attributes."""
 
         def __init__(self):
             pass
@@ -124,14 +124,14 @@ class Gnn(Model):
         self,
         topology: str,
         self_loops: bool,
-        gnn_class: Type[torch_geometric.nn.MessagePassing],
-        gnn_kwargs: Optional[dict],
-        position_key: Optional[str],
-        exclude_pos_from_node_features: Optional[bool],
-        velocity_key: Optional[str],
-        edge_radius: Optional[float],
-        pos_features: Optional[int],
-        vel_features: Optional[int],
+        gnn_class: type[torch_geometric.nn.MessagePassing],
+        gnn_kwargs: dict | None,
+        position_key: str | None,
+        exclude_pos_from_node_features: bool | None,
+        velocity_key: str | None,
+        edge_radius: float | None,
+        pos_features: int | None,
+        vel_features: int | None,
         **kwargs,
     ):
         self.topology = topology
@@ -175,7 +175,8 @@ class Gnn(Model):
         ) and not self.gnn_supports_edge_attrs:
             warnings.warn(
                 "Position key or velocity key provided but GNN class does not support edge attributes. "
-                "These keys will not be used for computing edge features."
+                "These keys will not be used for computing edge features.",
+                stacklevel=2,
             )
         if (
             position_key is not None or velocity_key is not None
@@ -370,7 +371,7 @@ class Gnn(Model):
         tensordict.set(self.out_key, res)
         return tensordict
 
-    def _get_key_terminating_with(self, keys: List[NestedKey], key: str) -> NestedKey:
+    def _get_key_terminating_with(self, keys: list[NestedKey], key: str) -> NestedKey:
         for k in keys:
             k_tuple = _unravel_key_to_tuple(k)
             if (
@@ -410,11 +411,11 @@ def _get_edge_index(topology: str, self_loops: bool, n_agents: int, device: str)
 
 def _batch_from_dense_to_ptg(
     x: Tensor,
-    edge_index: Optional[Tensor],
+    edge_index: Tensor | None,
     self_loops: bool,
     pos: Tensor = None,
     vel: Tensor = None,
-    edge_radius: Optional[float] = None,
+    edge_radius: float | None = None,
 ) -> torch_geometric.data.Batch:
     batch_size = prod(x.shape[:-2])
     n_agents = x.shape[-2]
@@ -468,15 +469,15 @@ class GnnConfig(ModelConfig):
     topology: str = MISSING
     self_loops: bool = MISSING
 
-    gnn_class: Type[torch_geometric.nn.MessagePassing] = MISSING
-    gnn_kwargs: Optional[dict] = None
+    gnn_class: type[torch_geometric.nn.MessagePassing] = MISSING
+    gnn_kwargs: dict | None = None
 
-    position_key: Optional[str] = None
-    pos_features: Optional[int] = 0
-    velocity_key: Optional[str] = None
-    vel_features: Optional[int] = 0
-    exclude_pos_from_node_features: Optional[bool] = None
-    edge_radius: Optional[float] = None
+    position_key: str | None = None
+    pos_features: int | None = 0
+    velocity_key: str | None = None
+    vel_features: int | None = 0
+    exclude_pos_from_node_features: bool | None = None
+    edge_radius: float | None = None
 
     @staticmethod
     def associated_class():

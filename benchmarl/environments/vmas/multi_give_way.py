@@ -4,10 +4,21 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 
 
 @dataclass
 class TaskConfig:
+    """Configuration for the VMAS Multi Give Way task.
+
+    A multi-agent extension of Give Way where multiple pairs of agents must coordinate
+    to pass through passages. Tests scalable coordination and collision avoidance with
+    multiple agent pairs.
+
+    Attributes:
+        max_steps: Maximum number of environment steps per episode.
+        agent_collision_penalty: Penalty for collisions between agents.
+    """
+
     max_steps: int = MISSING
     agent_collision_penalty: float = MISSING

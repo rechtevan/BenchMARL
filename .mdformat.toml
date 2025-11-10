@@ -1,0 +1,21 @@
+# mdformat configuration for BenchMARL
+# Markdown formatting configuration
+
+# Wrap prose at 120 characters
+wrap = 120
+
+# Enable GitHub Flavored Markdown (GFM) support
+# Requires: mdformat-gfm plugin
+# Install with: pip install mdformat-gfm
+
+# GFM features include:
+# - Tables
+# - Task lists
+# - Strikethrough
+# - Autolinks
+
+# Number ordered lists (1. 2. 3. instead of 1. 1. 1.)
+number = true
+
+# End files with a newline
+end_of_line = "lf"

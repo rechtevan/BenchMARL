@@ -4,7 +4,7 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Dict, Iterable, Tuple, Type
 
 import torch
@@ -57,7 +57,7 @@ class Mappo(Algorithm):
         scale_mapping: str,
         use_tanh_normal: bool,
         minibatch_advantage: bool,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
 

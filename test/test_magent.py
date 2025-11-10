@@ -6,20 +6,19 @@
 
 
 import pytest
+from utils import _has_magent2
+from utils_experiment import ExperimentUtils
 
 from benchmarl.algorithms import (
-    algorithm_config_registry,
     IppoConfig,
     IsacConfig,
     MasacConfig,
     QmixConfig,
+    algorithm_config_registry,
 )
 from benchmarl.algorithms.common import AlgorithmConfig
 from benchmarl.environments import MAgentTask, Task
 from benchmarl.experiment import Experiment
-
-from utils import _has_magent2
-from utils_experiment import ExperimentUtils
 
 
 @pytest.mark.skipif(not _has_magent2, reason="magent2 not found")
@@ -33,7 +32,6 @@ class TestMagent:
         experiment_config,
         cnn_sequence_config,
     ):
-
         # To not run unsupported algo-task pairs
         if not algo_config.supports_discrete_actions():
             pytest.skip()

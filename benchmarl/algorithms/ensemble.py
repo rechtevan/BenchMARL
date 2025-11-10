@@ -10,15 +10,43 @@ from typing import Dict, Iterable, Optional, Tuple, Type
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule
-
 from torchrl.objectives import LossModule
 
 from benchmarl.algorithms.common import Algorithm, AlgorithmConfig
-
 from benchmarl.models.common import ModelConfig
 
 
 class EnsembleAlgorithm(Algorithm):
+    """Ensemble algorithm that uses different algorithms for different agent groups.
+
+    This algorithm enables heterogeneous multi-agent learning by assigning
+    a different algorithm to each agent group. Each group's algorithm operates
+    independently with its own policies, critics, and training logic.
+
+    The ensemble delegates all algorithm operations (loss computation, parameter
+    retrieval, policy creation, batch processing) to the appropriate group-specific
+    algorithm based on the agent group being processed.
+
+    Args:
+        algorithms_map: Dictionary mapping agent group names to their respective
+            Algorithm instances.
+        **kwargs: Additional arguments passed to the base Algorithm class.
+
+    Attributes:
+        algorithms_map: Dictionary storing the algorithm instance for each group.
+
+    Example:
+        Creating an ensemble with different algorithms per group::
+
+            config = EnsembleAlgorithmConfig(
+                algorithm_configs_map={
+                    "group_1": MasacConfig(...),
+                    "group_2": MappoConfig(...),
+                }
+            )
+            algorithm = config.get_algorithm(experiment)
+    """
+
     def __init__(self, algorithms_map, **kwargs):
         super().__init__(**kwargs)
         self.algorithms_map = algorithms_map
@@ -56,6 +84,49 @@ class EnsembleAlgorithm(Algorithm):
 
 @dataclass
 class EnsembleAlgorithmConfig(AlgorithmConfig):
+    """Configuration dataclass for :class:`~benchmarl.algorithms.EnsembleAlgorithm`.
+
+    This config enables heterogeneous multi-agent learning by assigning different
+    algorithms to different agent groups. Each group can use its own learning
+    algorithm with independent hyperparameters, policies, and critics.
+
+    The ensemble algorithm can be either on-policy or off-policy, but all
+    constituent algorithms must be consistent in their training paradigm.
+    Similarly, action space support (continuous/discrete) is determined by
+    the intersection of capabilities across all algorithms.
+
+    Args:
+        algorithm_configs_map: Dictionary mapping agent group names to their
+            AlgorithmConfig instances. Group names must match the environment's
+            group names exactly.
+
+    Attributes:
+        algorithm_configs_map: Dictionary storing algorithm configs per group.
+
+    Note:
+        All algorithms in the ensemble must share the same training paradigm
+        (all on-policy or all off-policy). At least one action space type
+        (continuous or discrete) must be supported by all algorithms.
+
+    Example:
+        Creating an ensemble config with MASAC for one group and MAPPO for another::
+
+            from benchmarl.algorithms import MasacConfig, MappoConfig
+
+            config = EnsembleAlgorithmConfig(
+                algorithm_configs_map={
+                    "predators": MasacConfig(
+                        share_param_critic=False,
+                        num_qvalue_nets=2,
+                        loss_function="l2",
+                    ),
+                    "prey": MappoConfig(
+                        share_param_critic=True,
+                        clip_epsilon=0.2,
+                    ),
+                }
+            )
+    """
 
     algorithm_configs_map: Dict[str, AlgorithmConfig]
 

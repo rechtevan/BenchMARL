@@ -6,9 +6,10 @@
 
 
 import pytest
+from utils import _has_pettingzoo
+from utils_experiment import ExperimentUtils
 
 from benchmarl.algorithms import (
-    algorithm_config_registry,
     IddpgConfig,
     IppoConfig,
     IqlConfig,
@@ -17,13 +18,11 @@ from benchmarl.algorithms import (
     MappoConfig,
     MasacConfig,
     QmixConfig,
+    algorithm_config_registry,
 )
 from benchmarl.algorithms.common import AlgorithmConfig
 from benchmarl.environments import PettingZooTask, Task
 from benchmarl.experiment import Experiment
-
-from utils import _has_pettingzoo
-from utils_experiment import ExperimentUtils
 
 
 @pytest.mark.skipif(not _has_pettingzoo, reason="PettingZoo not found")

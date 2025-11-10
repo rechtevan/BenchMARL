@@ -2,8 +2,10 @@
 import os.path as osp
 import sys
 
-import benchmarl
 import benchmarl_sphinx_theme
+
+import benchmarl
+
 
 # -- Project information
 

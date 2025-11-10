@@ -6,15 +6,15 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Type
 
 import torch
-
-from benchmarl.models.common import Model, ModelConfig
 from tensordict import TensorDictBase
 from torch import nn
 from torchrl.modules import MLP, MultiAgentMLP
+
+from benchmarl.models.common import Model, ModelConfig
 
 
 class CustomModel(Model):
@@ -176,7 +176,6 @@ class CustomModel(Model):
 
 @dataclass
 class CustomModelConfig(ModelConfig):
-
     # The config parameters for this class, these will be loaded from yaml
     custom_param: int = MISSING
     activation_class: Type[nn.Module] = MISSING
@@ -188,7 +187,5 @@ class CustomModelConfig(ModelConfig):
 
     @property
     def is_rnn(self) -> bool:
-        """
-        Whether the model is an RNN
-        """
+        """Whether the model is an RNN"""
         return False

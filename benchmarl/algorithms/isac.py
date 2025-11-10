@@ -4,7 +4,7 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Dict, Iterable, Optional, Tuple, Type, Union
 
 from tensordict import TensorDictBase
@@ -64,7 +64,7 @@ class Isac(Algorithm):
         fixed_alpha: bool,
         scale_mapping: str,
         use_tanh_normal: bool,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
 

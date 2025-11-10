@@ -11,6 +11,7 @@ from os import walk
 from pathlib import Path
 from typing import Dict, List, Optional
 
+
 _has_marl_eval = importlib.util.find_spec("marl_eval") is not None
 if _has_marl_eval:
     from marl_eval.plotting_tools.plotting import (
@@ -83,7 +84,7 @@ def load_and_merge_json_dicts(
 
     dicts = []
     for file in json_input_files:
-        with open(file, "r") as f:
+        with open(file) as f:
             dicts.append(json.load(f))
     full_dict = {}
     for single_dict in dicts:
@@ -133,7 +134,7 @@ class Plotting:
         raw_data: Dict,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
     ) -> Dict:
-        """Call ``data_process_pipeline`` to normalize the chosen metrics and to clean the data
+        """Call ``data_process_pipeline`` to normalize the chosen metrics and to clean the data.
 
         Args:
             raw_data (dict): the input data
@@ -143,7 +144,6 @@ class Plotting:
             the processed dict
 
         """
-
         return data_process_pipeline(
             raw_data=raw_data,
             metrics_to_normalize=metrics_to_normalize,
@@ -170,7 +170,7 @@ class Plotting:
         environment_comparison_matrix,
         metric_name: Optional[str] = METRIC_TO_PLOT,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
-        **kwargs
+        **kwargs,
     ):
         return performance_profiles(
             environment_comparison_matrix,
@@ -185,7 +185,7 @@ class Plotting:
         metric_name: Optional[str] = METRIC_TO_PLOT,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
         save_tabular_as_latex: bool = True,
-        **kwargs
+        **kwargs,
     ):
         return aggregate_scores(
             dictionary=environment_comparison_matrix,
@@ -201,7 +201,7 @@ class Plotting:
         algorithms_to_compare: List[List[str]],
         metric_name: Optional[str] = METRIC_TO_PLOT,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
-        **kwargs
+        **kwargs,
     ):
         return probability_of_improvement(
             environment_comparison_matrix,
@@ -216,7 +216,7 @@ class Plotting:
         sample_effeciency_matrix,
         metric_name: Optional[str] = METRIC_TO_PLOT,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
-        **kwargs
+        **kwargs,
     ):
         return sample_efficiency_curves(
             dictionary=sample_effeciency_matrix,
@@ -236,7 +236,7 @@ class Plotting:
         env,
         metric_name: Optional[str] = METRIC_TO_PLOT,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
-        **kwargs
+        **kwargs,
     ):
         return plot_single_task(
             processed_data=processed_data,

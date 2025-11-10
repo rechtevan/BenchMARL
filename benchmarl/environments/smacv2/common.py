@@ -17,6 +17,17 @@ from benchmarl.utils import DEVICE_TYPING
 
 
 class Smacv2Class(TaskClass):
+    """Task class for StarCraft Multi-Agent Challenge v2 (SMACv2) environments.
+
+    SMACv2 provides StarCraft II-based multi-agent reinforcement learning scenarios where
+    teams of units must cooperate to defeat enemy forces. Supports various unit compositions
+    across Protoss, Terran, and Zerg races with different difficulty levels (balanced and
+    asymmetric matchups).
+
+    The environment provides global state information, agent observations with action masks,
+    and tracks battle outcomes including win rate and episode limit statistics.
+    """
+
     def get_env_fun(
         self,
         num_envs: int,

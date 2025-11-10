@@ -7,9 +7,10 @@
 import contextlib
 
 import pytest
+from hydra import compose, initialize
+
 from benchmarl.environments import _task_class_registry, task_config_registry
 from benchmarl.hydra_config import load_task_config_from_hydra
-from hydra import compose, initialize
 
 
 @pytest.mark.parametrize("task_name", task_config_registry.keys())

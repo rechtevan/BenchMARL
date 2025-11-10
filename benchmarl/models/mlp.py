@@ -6,8 +6,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, MISSING
-from typing import Optional, Sequence, Type
+from dataclasses import MISSING, dataclass
+from typing import Sequence
 
 import torch
 from tensordict import TensorDictBase
@@ -159,13 +159,13 @@ class MlpConfig(ModelConfig):
     """Dataclass config for a :class:`~benchmarl.models.Mlp`."""
 
     num_cells: Sequence[int] = MISSING
-    layer_class: Type[nn.Module] = MISSING
+    layer_class: type[nn.Module] = MISSING
 
-    activation_class: Type[nn.Module] = MISSING
-    activation_kwargs: Optional[dict] = None
+    activation_class: type[nn.Module] = MISSING
+    activation_kwargs: dict | None = None
 
-    norm_class: Type[nn.Module] = None
-    norm_kwargs: Optional[dict] = None
+    norm_class: type[nn.Module] = None
+    norm_kwargs: dict | None = None
 
     num_feature_dims: int = 1
 

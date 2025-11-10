@@ -9,6 +9,7 @@ from benchmarl.environments import VmasTask
 from benchmarl.experiment import Experiment, ExperimentConfig
 from benchmarl.models.mlp import MlpConfig
 
+
 if __name__ == "__main__":
     # WARNING: Configuring tasks is only suggested for debugging.
     # For benchmarking, you should use the default configuration/

@@ -13,8 +13,8 @@ from benchmarl.experiment import Experiment, ExperimentConfig
 from benchmarl.hydra_config import reload_experiment_from_file
 from benchmarl.models.mlp import MlpConfig
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     experiment_config = ExperimentConfig.get_from_yaml()
     # Save the experiment in the current folder
     experiment_config.save_folder = Path(os.path.dirname(os.path.realpath(__file__)))
@@ -41,11 +41,9 @@ if __name__ == "__main__":
 
     # Now we tell it where to resume from
     restored_experiment = reload_experiment_from_file(
-        (
-            experiment.folder_name
-            / "checkpoints"
-            / f"checkpoint_{experiment_config.checkpoint_interval}.pt"
-        )
+        experiment.folder_name
+        / "checkpoints"
+        / f"checkpoint_{experiment_config.checkpoint_interval}.pt"
     )  # Restore from first checkpoint
 
     # We keep the same configuration

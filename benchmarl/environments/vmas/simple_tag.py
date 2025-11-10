@@ -4,11 +4,33 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 
 
 @dataclass
 class TaskConfig:
+    """Configuration for the VMAS Simple Tag task.
+
+    A predator-prey environment where good agents (prey) try to avoid adversarial agents
+    (predators) in an environment with obstacles and landmarks. Tests competitive multi-agent
+    behavior and pursuit-evasion strategies. VMAS implementation of the MPE Simple Tag.
+
+    Attributes:
+        max_steps: Maximum number of environment steps per episode.
+        num_good_agents: Number of good agents (prey).
+        num_adversaries: Number of adversarial agents (predators).
+        num_landmarks: Number of landmarks in the environment.
+        shape_agent_rew: Whether to use shaped rewards for good agents.
+        shape_adversary_rew: Whether to use shaped rewards for adversaries.
+        agents_share_rew: Whether good agents share rewards.
+        adversaries_share_rew: Whether adversaries share rewards.
+        observe_same_team: Whether agents observe teammates.
+        observe_pos: Whether agents observe absolute positions.
+        observe_vel: Whether agents observe velocities.
+        bound: Boundary limit for the environment.
+        respawn_at_catch: Whether prey respawn when caught.
+    """
+
     max_steps: int = MISSING
     num_good_agents: int = MISSING
     num_adversaries: int = MISSING

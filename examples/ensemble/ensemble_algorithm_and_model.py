@@ -5,14 +5,15 @@
 #
 
 
+from models import DeepsetsConfig, EnsembleModelConfig, GnnConfig
+
 from benchmarl.algorithms import EnsembleAlgorithmConfig, IppoConfig, MappoConfig
 from benchmarl.environments import VmasTask
 from benchmarl.experiment import Experiment, ExperimentConfig
 from benchmarl.models import MlpConfig
-from models import DeepsetsConfig, EnsembleModelConfig, GnnConfig
+
 
 if __name__ == "__main__":
-
     # Loads from "benchmarl/conf/experiment/base_experiment.yaml"
     experiment_config = ExperimentConfig.get_from_yaml()
 

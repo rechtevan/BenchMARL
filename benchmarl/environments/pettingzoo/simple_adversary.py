@@ -4,11 +4,23 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 
 
 @dataclass
 class TaskConfig:
+    """Configuration for the PettingZoo Simple Adversary task.
+
+    A multi-agent particle environment where good agents must reach landmarks while
+    adversarial agents try to prevent them. Good agents are rewarded for reaching landmarks,
+    adversaries for staying near them. Supports both continuous and discrete actions.
+
+    Attributes:
+        task: The task name identifier.
+        N: Number of agents (both good and adversarial).
+        max_cycles: Maximum number of environment steps per episode.
+    """
+
     task: str = MISSING
     N: int = MISSING
     max_cycles: int = MISSING

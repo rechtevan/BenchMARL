@@ -8,6 +8,7 @@ from pathlib import Path
 
 from benchmarl.hydra_config import reload_experiment_from_file
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Evaluates the experiment from a checkpoint file."

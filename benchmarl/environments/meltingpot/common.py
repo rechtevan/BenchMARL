@@ -8,7 +8,6 @@ from typing import Callable, Dict, List, Optional
 
 import torch
 from tensordict import TensorDictBase
-
 from torchrl.data import Composite
 from torchrl.envs import (
     DoubleToFloat,
@@ -23,6 +22,16 @@ from benchmarl.utils import DEVICE_TYPING
 
 
 class MeltingPotClass(TaskClass):
+    """Task class for MeltingPot multi-agent reinforcement learning environments.
+
+    MeltingPot is a suite of test scenarios for multi-agent RL that focuses on social
+    dilemmas and cooperation. It provides RGB observations and supports categorical actions.
+    Environments include scenarios like Clean Up, Prisoners Dilemma, and various coordination games.
+
+    The environment provides global state as RGB images and requires special transforms
+    for handling visual observations and interaction inventories.
+    """
+
     def get_env_fun(
         self,
         num_envs: int,

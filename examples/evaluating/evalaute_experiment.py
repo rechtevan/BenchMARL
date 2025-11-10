@@ -8,8 +8,8 @@ from pathlib import Path
 
 from benchmarl.hydra_config import reload_experiment_from_file
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     # Let's assume that we have run an experiment with
     # `python benchmarl/run.py task=vmas/balance algorithm=mappo experiment.max_n_iters=2 experiment.on_policy_collected_frames_per_batch=100 experiment.checkpoint_interval=100`
     # and we have obtained

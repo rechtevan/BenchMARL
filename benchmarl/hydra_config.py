@@ -8,11 +8,12 @@ from dataclasses import is_dataclass
 from pathlib import Path
 
 from benchmarl.algorithms.common import AlgorithmConfig
-from benchmarl.environments import task_config_registry, TaskClass
+from benchmarl.environments import TaskClass, task_config_registry
 from benchmarl.environments.common import _type_check_task_config
 from benchmarl.experiment import Experiment, ExperimentConfig
 from benchmarl.models import model_config_registry
-from benchmarl.models.common import ModelConfig, parse_model_config, SequenceModelConfig
+from benchmarl.models.common import ModelConfig, SequenceModelConfig, parse_model_config
+
 
 _has_hydra = importlib.util.find_spec("hydra") is not None
 
@@ -38,6 +39,7 @@ def load_experiment_from_hydra(
     Args:
         cfg (DictConfig): the config dictionary from hydra main
         task_name (str): the name of the task to load
+        callbacks: callbacks to pass to the experiment
 
     Returns:
         :class:`~benchmarl.experiment.Experiment`

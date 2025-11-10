@@ -6,8 +6,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, MISSING
-from typing import Optional, Sequence, Type
+from dataclasses import MISSING, dataclass
+from typing import Sequence
 
 import torch
 import torch.nn.functional as F
@@ -15,14 +15,40 @@ from tensordict import TensorDict, TensorDictBase
 from tensordict.utils import expand_as_right, unravel_key_list
 from torch import nn
 from torchrl.data.tensor_specs import Composite, Unbounded
-
-from torchrl.modules import GRUCell, MLP, MultiAgentMLP
+from torchrl.modules import MLP, GRUCell, MultiAgentMLP
 
 from benchmarl.models.common import Model, ModelConfig
 from benchmarl.utils import DEVICE_TYPING
 
 
 class GRU(torch.nn.Module):
+    """Core Gated Recurrent Unit (GRU) recurrent neural network module.
+
+    This implements a multi-layer GRU RNN that processes sequential data with
+    explicit handling of episode initialization flags. The architecture uses
+    stacked GRUCell layers with optional dropout between layers.
+
+    Key characteristics:
+        - Recurrent Neural Network (RNN) architecture
+        - Maintains hidden state across timesteps
+        - Resets hidden state when episode initialization flag is True
+        - Supports multi-layer stacking with inter-layer dropout
+
+    Typical use cases:
+        - Processing time-series observations in partially observable environments
+        - Learning temporal dependencies in agent observations
+        - Memory-augmented policy and value function approximation
+
+    Args:
+        input_size: Number of input features.
+        hidden_size: Number of features in the hidden state.
+        device: Device to place the module on.
+        n_layers: Number of stacked GRU layers.
+        dropout: Dropout probability applied between layers (not after last layer).
+        bias: If False, GRU cells do not use bias weights.
+        time_dim: Dimension along which time steps are arranged (default: -2).
+    """
+
     def __init__(
         self,
         input_size: int,
@@ -83,6 +109,23 @@ class GRU(torch.nn.Module):
 
 
 def get_net(input_size, hidden_size, n_layers, bias, device, dropout, compile):
+    """Create and optionally compile a GRU network.
+
+    Instantiates a GRU module with the specified hyperparameters and optionally
+    compiles it for improved performance using PyTorch's compilation.
+
+    Args:
+        input_size: Number of input features.
+        hidden_size: Number of hidden features.
+        n_layers: Number of GRU layers.
+        bias: Whether to use bias in GRU cells.
+        device: Device to place the GRU on.
+        dropout: Dropout probability for non-last layers.
+        compile: Whether to compile the GRU using torch.compile.
+
+    Returns:
+        GRU: A GRU module, optionally compiled.
+    """
     gru = GRU(
         input_size,
         hidden_size,
@@ -97,6 +140,36 @@ def get_net(input_size, hidden_size, n_layers, bias, device, dropout, compile):
 
 
 class MultiAgentGRU(torch.nn.Module):
+    """Multi-agent wrapper for GRU recurrent neural networks.
+
+    This module extends the GRU architecture to handle multi-agent scenarios with
+    support for parameter sharing, centralized training, and efficient vectorized
+    computation across agents using torch.vmap.
+
+    Key characteristics:
+        - Recurrent Neural Network (RNN) for multi-agent systems
+        - Supports both decentralized (per-agent) and centralized processing
+        - Optional parameter sharing across agents for efficiency
+        - Uses vmap for parallelized agent processing
+
+    Typical use cases:
+        - Multi-agent reinforcement learning with recurrent policies
+        - Centralized training with decentralized execution (CTDE)
+        - Parameter-efficient multi-agent training via weight sharing
+
+    Args:
+        input_size: Number of input features per agent.
+        hidden_size: Number of features in the hidden state.
+        n_agents: Number of agents to process.
+        device: Device to place the module on.
+        centralised: If True, concatenates all agent inputs before processing.
+        share_params: If True, all agents share the same GRU parameters.
+        n_layers: Number of stacked GRU layers.
+        dropout: Dropout probability applied between layers.
+        bias: If False, GRU cells do not use bias weights.
+        compile: If True, compiles the GRU for optimized execution.
+    """
+
     def __init__(
         self,
         input_size: int,
@@ -176,9 +249,7 @@ class MultiAgentGRU(torch.nn.Module):
             h_0 = h_0.unsqueeze(0)
             is_init = is_init.unsqueeze(0)
 
-        if (
-            not training
-        ):  # In collection we emulate the sequence dimension and we have the hidden state
+        if not training:  # In collection we emulate the sequence dimension and we have the hidden state
             input = input.unsqueeze(1)
 
         # Check input
@@ -274,7 +345,8 @@ class MultiAgentGRU(torch.nn.Module):
 
 
 class Gru(Model):
-    r"""A multi-layer Gated Recurrent Unit (GRU) RNN like the one from
+    r"""A multi-layer Gated Recurrent Unit (GRU) RNN like the one from.
+
     `torch <https://pytorch.org/docs/stable/generated/torch.nn.GRU.html>`__ .
 
     The BenchMARL GRU accepts multiple inputs of type array: Tensors of shape ``(*batch,F)``
@@ -306,7 +378,6 @@ class Gru(Model):
         compile: bool,
         **kwargs,
     ):
-
         super().__init__(
             input_spec=kwargs.pop("input_spec"),
             output_spec=kwargs.pop("output_spec"),
@@ -496,12 +567,12 @@ class GruConfig(ModelConfig):
     compile: bool = MISSING
 
     mlp_num_cells: Sequence[int] = MISSING
-    mlp_layer_class: Type[nn.Module] = MISSING
-    mlp_activation_class: Type[nn.Module] = MISSING
+    mlp_layer_class: type[nn.Module] = MISSING
+    mlp_activation_class: type[nn.Module] = MISSING
 
-    mlp_activation_kwargs: Optional[dict] = None
-    mlp_norm_class: Type[nn.Module] = None
-    mlp_norm_kwargs: Optional[dict] = None
+    mlp_activation_kwargs: dict | None = None
+    mlp_norm_class: type[nn.Module] = None
+    mlp_norm_kwargs: dict | None = None
 
     @staticmethod
     def associated_class():

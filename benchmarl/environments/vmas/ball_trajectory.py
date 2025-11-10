@@ -4,10 +4,20 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 
 
 @dataclass
 class TaskConfig:
+    """Configuration for the VMAS Ball Trajectory task.
+
+    A cooperative task where agents must guide a ball along a desired trajectory.
+    Tests coordinated manipulation and trajectory following capabilities.
+
+    Attributes:
+        max_steps: Maximum number of environment steps per episode.
+        joints: Whether the ball is connected with joints to agents.
+    """
+
     max_steps: int = MISSING
     joints: bool = MISSING

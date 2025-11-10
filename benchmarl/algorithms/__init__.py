@@ -16,6 +16,7 @@ from .masac import Masac, MasacConfig
 from .qmix import Qmix, QmixConfig
 from .vdn import Vdn, VdnConfig
 
+
 classes = [
     "Iddpg",
     "IddpgConfig",

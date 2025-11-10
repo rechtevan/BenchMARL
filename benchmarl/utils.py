@@ -14,6 +14,7 @@ import yaml
 from torchrl.data import Composite
 from torchrl.envs import Compose, EnvBase, InitTracker, TensorDictPrimer, TransformedEnv
 
+
 if typing.TYPE_CHECKING:
     from benchmarl.models import ModelConfig
 
@@ -46,7 +47,8 @@ def _class_from_name(name: str):
 
 
 def seed_everything(seed: int):
-    r"""Sets the seed for generating random numbers in :pytorch:`PyTorch`,
+    r"""Sets the seed for generating random numbers in :pytorch:`PyTorch`.
+
     :obj:`numpy` and :python:`Python`.
 
     Args:
@@ -62,6 +64,16 @@ def seed_everything(seed: int):
 
 @contextlib.contextmanager
 def local_seed():
+    """Context manager for temporarily preserving random number generator states.
+
+    Saves the current state of PyTorch, NumPy (if available), and Python's
+    random module, allows code to execute within the context, then restores
+    all random states to their original values. This enables reproducible
+    random number generation for code blocks without affecting global state.
+
+    Yields:
+        None
+    """
     torch_state = torch.random.get_rng_state()
     if _has_numpy:
         import numpy as np
@@ -82,8 +94,7 @@ def _add_rnn_transforms(
     group_map: Dict[str, List[str]],
     model_config: "ModelConfig",
 ) -> Callable[[], EnvBase]:
-    """
-    This function adds RNN specific transforms to the environment
+    """This function adds RNN specific transforms to the environment.
 
     Args:
         env_fun (callable): a function that takes no args and creates an environment
@@ -101,7 +112,7 @@ def _add_rnn_transforms(
                 group: Composite(
                     model_config._get_model_state_spec_inner(group=group).expand(
                         len(agents),
-                        *model_config._get_model_state_spec_inner(group=group).shape
+                        *model_config._get_model_state_spec_inner(group=group).shape,
                     ),
                     shape=(len(agents),),
                 )

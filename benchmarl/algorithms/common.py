@@ -5,7 +5,6 @@
 #
 
 import pathlib
-
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
@@ -30,12 +29,12 @@ from torchrl.objectives import LossModule
 from torchrl.objectives.utils import HardUpdate, SoftUpdate, TargetNetUpdater
 
 from benchmarl.models.common import ModelConfig
-from benchmarl.utils import _read_yaml_config, DEVICE_TYPING
+from benchmarl.utils import DEVICE_TYPING, _read_yaml_config
 
 
 class Algorithm(ABC):
-    """
-    Abstract class for an algorithm.
+    """Abstract class for an algorithm.
+
     This should be overridden by implemented algorithms
     and all abstract methods should be implemented.
 
@@ -108,8 +107,8 @@ class Algorithm(ABC):
                 )
 
     def get_loss_and_updater(self, group: str) -> Tuple[LossModule, TargetNetUpdater]:
-        """
-        Get the LossModule and TargetNetUpdater for a specific group.
+        """Get the LossModule and TargetNetUpdater for a specific group.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_loss()` which needs to be implemented.
         The function will cache the output at the first call and return the cached values in future calls.
 
@@ -144,8 +143,8 @@ class Algorithm(ABC):
     def get_replay_buffer(
         self, group: str, transforms: List[Transform] = None
     ) -> ReplayBuffer:
-        """
-        Get the ReplayBuffer for a specific group.
+        """Get the ReplayBuffer for a specific group.
+
         This function will check ``self.on_policy`` and create the buffer accordingly
 
         Args:
@@ -198,8 +197,8 @@ class Algorithm(ABC):
         )
 
     def get_policy_for_loss(self, group: str) -> TensorDictModule:
-        """
-        Get the non-explorative policy for a specific group loss.
+        """Get the non-explorative policy for a specific group loss.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_policy_for_loss()` which needs to be implemented.
         The function will cache the output at the first call and return the cached values in future calls.
 
@@ -223,8 +222,8 @@ class Algorithm(ABC):
         return self._policies_for_loss[group]
 
     def get_policy_for_collection(self) -> TensorDictSequential:
-        """
-        Get the explorative policy for all groups together.
+        """Get the explorative policy for all groups together.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_policy_for_collection()` which needs to be implemented.
         The function will cache the output at the first call and return the cached values in future calls.
 
@@ -246,8 +245,8 @@ class Algorithm(ABC):
         return TensorDictSequential(*policies)
 
     def get_parameters(self, group: str) -> Dict[str, Iterable]:
-        """
-        Get the dictionary mapping loss names to the relative parameters to optimize for a given group.
+        """Get the dictionary mapping loss names to the relative parameters to optimize for a given group.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_parameters()` which needs to be implemented.
 
         Returns: a dictionary mapping loss names to a parameters' list
@@ -261,8 +260,7 @@ class Algorithm(ABC):
         self,
         env_fun: Callable[[], EnvBase],
     ) -> Callable[[], EnvBase]:
-        """
-        This function can be used to wrap env_fun
+        """This function can be used to wrap env_fun.
 
         Args:
             env_fun (callable): a function that takes no args and creates an enviornment
@@ -270,7 +268,6 @@ class Algorithm(ABC):
         Returns: a function that takes no args and creates an enviornment
 
         """
-
         return env_fun
 
     ###############################
@@ -281,8 +278,7 @@ class Algorithm(ABC):
     def _get_loss(
         self, group: str, policy_for_loss: TensorDictModule, continuous: bool
     ) -> Tuple[LossModule, bool]:
-        """
-        Implement this function to return the LossModule for a specific group.
+        """Implement this function to return the LossModule for a specific group.
 
         Args:
             group (str): agent group of the loss
@@ -295,8 +291,7 @@ class Algorithm(ABC):
 
     @abstractmethod
     def _get_parameters(self, group: str, loss: LossModule) -> Dict[str, Iterable]:
-        """
-        Get the dictionary mapping loss names to the relative parameters to optimize for a given group loss.
+        """Get the dictionary mapping loss names to the relative parameters to optimize for a given group loss.
 
         Returns: a dictionary mapping loss names to a parameters' list
         """
@@ -306,8 +301,7 @@ class Algorithm(ABC):
     def _get_policy_for_loss(
         self, group: str, model_config: ModelConfig, continuous: bool
     ) -> TensorDictModule:
-        """
-        Get the non-explorative policy for a specific group.
+        """Get the non-explorative policy for a specific group.
 
         Args:
             group (str): agent group of the policy
@@ -322,8 +316,7 @@ class Algorithm(ABC):
     def _get_policy_for_collection(
         self, policy_for_loss: TensorDictModule, group: str, continuous: bool
     ) -> TensorDictModule:
-        """
-        Implement this function to add an explorative layer to the policy used in the loss.
+        """Implement this function to add an explorative layer to the policy used in the loss.
 
         Args:
             policy_for_loss (TensorDictModule): the group policy used in the loss
@@ -336,8 +329,7 @@ class Algorithm(ABC):
 
     @abstractmethod
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
-        """
-        This function can be used to reshape data coming from collection before it is passed to the policy.
+        """This function can be used to reshape data coming from collection before it is passed to the policy.
 
         Args:
             group (str): agent group
@@ -351,8 +343,8 @@ class Algorithm(ABC):
     def process_loss_vals(
         self, group: str, loss_vals: TensorDictBase
     ) -> TensorDictBase:
-        """
-        Here you can modify the loss_vals tensordict containing entries loss_name->loss_value
+        """Here you can modify the loss_vals tensordict containing entries loss_name->loss_value.
+
         For example, you can sum two entries in a new entry, to optimize them together.
 
         Args:
@@ -366,8 +358,8 @@ class Algorithm(ABC):
 
 @dataclass
 class AlgorithmConfig:
-    """
-    Dataclass representing an algorithm configuration.
+    """Dataclass representing an algorithm configuration.
+
     This should be overridden by implemented algorithms.
     Implementors should:
 
@@ -377,8 +369,7 @@ class AlgorithmConfig:
     """
 
     def get_algorithm(self, experiment) -> Algorithm:
-        """
-        Main function to turn the config into the associated algorithm
+        """Main function to turn the config into the associated algorithm.
 
         Args:
             experiment (Experiment): the experiment class
@@ -403,8 +394,7 @@ class AlgorithmConfig:
 
     @classmethod
     def get_from_yaml(cls, path: Optional[str] = None):
-        """
-        Load the algorithm configuration from yaml
+        """Load the algorithm configuration from yaml.
 
         Args:
             path (str, optional): The full path of the yaml file to load from.
@@ -413,7 +403,6 @@ class AlgorithmConfig:
 
         Returns: the loaded AlgorithmConfig
         """
-
         if path is None:
             config = AlgorithmConfig._load_from_yaml(
                 name=cls.associated_class().__name__
@@ -426,53 +415,39 @@ class AlgorithmConfig:
     @staticmethod
     @abstractmethod
     def associated_class() -> Type[Algorithm]:
-        """
-        The algorithm class associated to the config
-        """
+        """The algorithm class associated to the config."""
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
     def on_policy() -> bool:
-        """
-        If the algorithm has to be run on policy or off policy
-        """
+        """If the algorithm has to be run on policy or off policy."""
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
     def supports_continuous_actions() -> bool:
-        """
-        If the algorithm supports continuous actions
-        """
+        """If the algorithm supports continuous actions."""
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
     def supports_discrete_actions() -> bool:
-        """
-        If the algorithm supports discrete actions
-        """
+        """If the algorithm supports discrete actions."""
         raise NotImplementedError
 
     @staticmethod
     def has_independent_critic() -> bool:
-        """
-        If the algorithm uses an independent critic
-        """
+        """If the algorithm uses an independent critic."""
         return False
 
     @staticmethod
     def has_centralized_critic() -> bool:
-        """
-        If the algorithm uses a centralized critic
-        """
+        """If the algorithm uses a centralized critic."""
         return False
 
     def has_critic(self) -> bool:
-        """
-        If the algorithm uses a critic
-        """
+        """If the algorithm uses a critic."""
         if self.has_centralized_critic() and self.has_independent_critic():
             raise ValueError(
                 "Algorithm can either have a centralized critic or an indpendent one"

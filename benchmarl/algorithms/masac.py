@@ -4,7 +4,7 @@
 #  LICENSE file in the root directory of this source tree.
 #
 import warnings
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Dict, Iterable, Optional, Tuple, Type, Union
 
 import torch
@@ -125,7 +125,8 @@ class Masac(Algorithm):
             if self.coupled_discrete_values and not self.share_param_critic:
                 warnings.warn(
                     "disabling share_param_critic in MASAC with discrete actions and coupled_discrete_values has not effect"
-                    "as the critic is already able to predict different values for different agents."
+                    "as the critic is already able to predict different values for different agents.",
+                    stacklevel=2,
                 )
             loss_module = DiscreteSACLoss(
                 actor_network=policy_for_loss,
@@ -487,7 +488,6 @@ class Masac(Algorithm):
             )
 
         if self.state_spec is not None:
-
             modules.append(
                 TensorDictModule(
                     lambda action: action.reshape(*action.shape[:-2], -1),
