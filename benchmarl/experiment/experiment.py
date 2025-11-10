@@ -18,7 +18,7 @@ import warnings
 from collections import OrderedDict, deque
 from dataclasses import MISSING, dataclass
 from pathlib import Path
-from typing import Any, Deque
+from typing import Any
 
 import torch
 from tensordict import TensorDictBase
@@ -970,6 +970,7 @@ class Experiment(CallbackNotifier):
         )
         if not self.config.collect_with_grad:
             state_dict.update({"collector": self.collector.state_dict()})
+        self._on_state_dict(state_dict)
         return state_dict
 
     def load_state_dict(self, state_dict: dict) -> None:
@@ -991,6 +992,7 @@ class Experiment(CallbackNotifier):
         self.total_frames = state_dict["state"]["total_frames"]
         self.n_iters_performed = state_dict["state"]["n_iters_performed"]
         self.mean_return = state_dict["state"]["mean_return"]
+        self._on_load_state_dict(state_dict)
 
     def _save_experiment(self) -> None:
         """Checkpoint trainer."""
