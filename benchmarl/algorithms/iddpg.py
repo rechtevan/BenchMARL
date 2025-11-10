@@ -40,6 +40,10 @@ class Iddpg(Algorithm):
         use_tanh_mapping: bool,
         **kwargs,
     ):
+        """Initialize the IDDPG algorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
 
         self.share_param_critic = share_param_critic

@@ -45,6 +45,10 @@ class Algorithm(ABC):
     """
 
     def __init__(self, experiment):
+        """Initialize the Algorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         self.experiment = experiment
 
         self.device: DEVICE_TYPING = experiment.config.train_device

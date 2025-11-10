@@ -70,6 +70,10 @@ class TaskClass(abc.ABC):
     """
 
     def __init__(self, name: str, config: Optional[dict[str, Any]]):
+        """Initialize the TaskClass.
+
+        Parameters are documented in the class docstring.
+        """
         self.name = name
         if config is None:
             config = {}

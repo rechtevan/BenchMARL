@@ -61,6 +61,10 @@ class GRU(torch.nn.Module):
         bias: bool,
         time_dim: int = -2,
     ):
+        """Initialize the _GruNet.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -190,6 +194,10 @@ class MultiAgentGRU(torch.nn.Module):
         bias: bool,
         compile: bool,
     ):
+        """Initialize the MultiAgentGru.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__()
         self.input_size = input_size
         self.n_agents = n_agents
@@ -200,7 +208,7 @@ class MultiAgentGRU(torch.nn.Module):
         self.n_layers = n_layers
         self.bias = bias
         self.dropout = dropout
-        self.compile = compile
+        self.compile = compile  # type: ignore[method-assign,assignment]  # Dynamic compile flag assignment
 
         effective_input_size = (
             input_size * self.n_agents if self.centralised else input_size
@@ -402,6 +410,10 @@ class Gru(Model):
         compile: bool,
         **kwargs,
     ):
+        """Initialize the Gru model.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(
             input_spec=kwargs.pop("input_spec"),
             output_spec=kwargs.pop("output_spec"),
@@ -554,10 +566,10 @@ class Gru(Model):
                 dtype=torch.float,
             )
             if self.share_params:
-                output, _ = self.gru[0](input, is_init, h_0)
+                output, _ = self.gru[0](input, is_init, h_0)  # type: ignore[index]  # ModuleList indexing
             else:
                 outputs = []
-                for net in self.gru:
+                for net in self.gru:  # type: ignore[attr-defined]  # ModuleList iteration
                     output, _ = net(input, is_init, h_0)
                     outputs.append(output)
                 output = torch.stack(outputs, dim=-2)

@@ -137,6 +137,10 @@ class Gnn(Model):
         vel_features: int | None,
         **kwargs,
     ):
+        """Initialize the Gnn model.
+
+        Parameters are documented in the class docstring.
+        """
         self.topology = topology
         self.self_loops = self_loops
         self.position_key = position_key
@@ -195,7 +199,7 @@ class Gnn(Model):
         self.edge_index = _get_edge_index(
             topology=self.topology,
             self_loops=self.self_loops,
-            device=self.device,
+            device=self.device,  # type: ignore[arg-type]  # Device union types are compatible
             n_agents=self.n_agents,
         )
         self._full_position_key = None
@@ -307,7 +311,7 @@ class Gnn(Model):
                         f"while model was configured with pos_features={expected_features}"
                     )
             else:
-                pos = tensordict.get(self._full_position_key)
+                pos = tensordict.get(self._full_position_key)  # type: ignore[unreachable]  # This is reachable on subsequent calls
             if not self.exclude_pos_from_node_features:
                 input.append(pos)
         else:
@@ -329,7 +333,7 @@ class Gnn(Model):
                         f"while model was configured with vel_features={expected_vel_features}"
                     )
             else:
-                vel = tensordict.get(self._full_velocity_key)
+                vel = tensordict.get(self._full_velocity_key)  # type: ignore[unreachable]  # This is reachable on subsequent calls
             input.append(vel)
         else:
             vel = None

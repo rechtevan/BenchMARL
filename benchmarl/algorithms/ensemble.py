@@ -49,6 +49,10 @@ class EnsembleAlgorithm(Algorithm):
     """
 
     def __init__(self, algorithms_map, **kwargs):
+        """Initialize the EnsembleAlgorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
         self.algorithms_map = algorithms_map
 
@@ -185,7 +189,7 @@ class EnsembleAlgorithmConfig(AlgorithmConfig):
                 f"EnsembleAlgorithm group names {self.algorithm_configs_map.keys()} do not match "
                 f"environment group names {experiment.group_map.keys()}"
             )
-        return self.associated_class()(
+        return self.associated_class()(  # type: ignore[call-arg]  # EnsembleAlgorithm accepts algorithms_map
             algorithms_map={
                 group: algorithm_config.get_algorithm(experiment)
                 for group, algorithm_config in self.algorithm_configs_map.items()
@@ -214,59 +218,66 @@ class EnsembleAlgorithmConfig(AlgorithmConfig):
         """
         return EnsembleAlgorithm
 
-    def on_policy(self) -> bool:
+    @staticmethod
+    def on_policy() -> bool:
         """Check if the ensemble algorithm is on-policy.
 
         Returns:
             True if all constituent algorithms are on-policy, False otherwise.
-        """
-        return self._on_policy
 
-    def supports_continuous_actions(self) -> bool:
+        Note: For ensemble algorithms, this should be determined from algorithm_configs_map.
+              This method cannot be static in EnsembleAlgorithm but must be for API compatibility.
+        """
+        raise NotImplementedError(
+            "EnsembleAlgorithm.on_policy() should not be called directly"
+        )
+
+    @staticmethod
+    def supports_continuous_actions() -> bool:
         """Check if all algorithms in the ensemble support continuous actions.
 
         Returns:
             True if all constituent algorithms support continuous actions, False otherwise.
-        """
-        supports_continuous_actions = True
-        for algorithm_config in self.algorithm_configs_map.values():
-            supports_continuous_actions *= (
-                algorithm_config.supports_continuous_actions()
-            )
-        return supports_continuous_actions
 
-    def supports_discrete_actions(self) -> bool:
+        Note: For ensemble algorithms, this should be determined from algorithm_configs_map.
+              This method cannot be static in EnsembleAlgorithm but must be for API compatibility.
+        """
+        raise NotImplementedError(
+            "EnsembleAlgorithm.supports_continuous_actions() should not be called directly"
+        )
+
+    @staticmethod
+    def supports_discrete_actions() -> bool:
         """Check if all algorithms in the ensemble support discrete actions.
 
         Returns:
             True if all constituent algorithms support discrete actions, False otherwise.
         """
-        supports_discrete_actions = True
-        for algorithm_config in self.algorithm_configs_map.values():
-            supports_discrete_actions *= algorithm_config.supports_discrete_actions()
-        return supports_discrete_actions
+        raise NotImplementedError(
+            "EnsembleAlgorithm.supports_discrete_actions() should not be called directly"
+        )
 
-    def has_independent_critic(self) -> bool:
+    @staticmethod
+    def has_independent_critic() -> bool:
         """Check if any algorithm in the ensemble has an independent critic.
 
         Returns:
             True if at least one constituent algorithm has an independent critic, False otherwise.
         """
-        has_independent_critic = False
-        for algorithm_config in self.algorithm_configs_map.values():
-            has_independent_critic += algorithm_config.has_independent_critic()
-        return has_independent_critic
+        raise NotImplementedError(
+            "EnsembleAlgorithm.has_independent_critic() should not be called directly"
+        )
 
-    def has_centralized_critic(self) -> bool:
+    @staticmethod
+    def has_centralized_critic() -> bool:
         """Check if any algorithm in the ensemble has a centralized critic.
 
         Returns:
             True if at least one constituent algorithm has a centralized critic, False otherwise.
         """
-        has_centralized_critic = False
-        for algorithm_config in self.algorithm_configs_map.values():
-            has_centralized_critic += algorithm_config.has_centralized_critic()
-        return has_centralized_critic
+        raise NotImplementedError(
+            "EnsembleAlgorithm.has_centralized_critic() should not be called directly"
+        )
 
     def has_critic(self) -> bool:
         """Check if any algorithm in the ensemble has a critic.

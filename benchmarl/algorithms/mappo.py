@@ -61,6 +61,10 @@ class Mappo(Algorithm):
         minibatch_advantage: bool,
         **kwargs,
     ):
+        """Initialize the MAPPO algorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
 
         self.share_param_critic = share_param_critic

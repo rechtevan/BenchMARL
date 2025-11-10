@@ -38,6 +38,10 @@ class Benchmark:
         experiment_config: ExperimentConfig,
         critic_model_config: Optional[ModelConfig] = None,
     ):
+        """Initialize the Benchmark.
+
+        Parameters are documented in the class docstring.
+        """
         self.algorithm_configs = algorithm_configs
         self.tasks = tasks
         self.seeds = seeds

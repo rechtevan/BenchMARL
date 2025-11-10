@@ -58,7 +58,7 @@ class MAgentClass(TaskClass):
 
     def __get_env(self, config) -> EnvBase:
         try:
-            from magent2.environments import (
+            from magent2.environments import (  # type: ignore[import-not-found]  # Optional dependency
                 adversarial_pursuit_v4,
                 # battle_v4,
                 # battlefield_v5,

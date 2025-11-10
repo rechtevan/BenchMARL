@@ -106,6 +106,10 @@ class Model(TensorDictModuleBase, ABC):
         model_index: int,
         is_critic: bool,
     ):
+        """Initialize the Model.
+
+        Parameters are documented in the class docstring.
+        """
         TensorDictModuleBase.__init__(self)
 
         self.input_spec = input_spec
@@ -245,6 +249,10 @@ class SequenceModel(Model):
         self,
         models: List[Model],
     ):
+        """Initialize the SequenceModel.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(
             n_agents=models[0].n_agents,
             input_spec=models[0].input_spec,
@@ -607,7 +615,7 @@ class EnsembleModelConfig(ModelConfig):
 
     model_configs_map: Dict[str, ModelConfig]
 
-    def get_model(self, agent_group: str, **kwargs: Any) -> Model:
+    def get_model(self, agent_group: str, **kwargs: Any) -> Model:  # type: ignore[override]  # Signature simplified for multi-agent use
         """Get model.
 
         Returns:

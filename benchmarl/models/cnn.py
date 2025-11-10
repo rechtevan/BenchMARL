@@ -105,6 +105,10 @@ class Cnn(Model):
         self,
         **kwargs,
     ):
+        """Initialize the Cnn model.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(
             input_spec=kwargs.pop("input_spec"),
             output_spec=kwargs.pop("output_spec"),

@@ -33,6 +33,10 @@ class Qmix(Algorithm):
     def __init__(
         self, mixing_embed_dim: int, delay_value: bool, loss_function: str, **kwargs
     ):
+        """Initialize the QMIX algorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
 
         self.delay_value = delay_value

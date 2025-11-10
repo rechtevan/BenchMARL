@@ -22,6 +22,7 @@ class Callback:
     """
 
     def __init__(self):
+        """Initialize the Callback."""
         self.experiment = None
 
     def on_setup(self):
@@ -87,6 +88,10 @@ class CallbackNotifier:
     """
 
     def __init__(self, experiment, callbacks: list[Callback]):
+        """Initialize the CallbackNotifier.
+
+        Parameters are documented in the class docstring.
+        """
         self.callbacks = callbacks
         for callback in self.callbacks:
             callback.experiment = experiment

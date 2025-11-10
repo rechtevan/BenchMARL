@@ -77,6 +77,10 @@ class Masac(Algorithm):
         coupled_discrete_values: bool,
         **kwargs,
     ):
+        """Initialize the MASAC algorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
 
         self.share_param_critic = share_param_critic
@@ -164,7 +168,7 @@ class Masac(Algorithm):
         return loss_module, True
 
     def _get_parameters(self, group: str, loss: LossModule) -> Dict[str, Iterable]:
-        items = {
+        items: Dict[str, Iterable] = {
             "loss_actor": list(loss.actor_network_params.flatten_keys().values()),
             "loss_qvalue": list(loss.qvalue_network_params.flatten_keys().values()),
         }
@@ -421,9 +425,9 @@ class Masac(Algorithm):
             global_state_key = _unravel_key_to_tuple(
                 list(self.state_spec.keys(True, True))[0]
             )
-            new_global_state_key = list(global_state_key)
-            new_global_state_key[-1] = new_global_state_key[-1] + "_expanded"
-            new_global_state_key = tuple(new_global_state_key)
+            new_global_state_key_list = list(global_state_key)
+            new_global_state_key_list[-1] = new_global_state_key_list[-1] + "_expanded"
+            new_global_state_key = tuple(new_global_state_key_list)
             modules.append(
                 TensorDictModule(
                     lambda state: state.unsqueeze(

@@ -39,6 +39,10 @@ class Mlp(Model):
         self,
         **kwargs,
     ):
+        """Initialize the Mlp model.
+
+        Parameters are documented in the class docstring.
+        """
         self.num_feature_dims = kwargs.pop("num_feature_dims", 1)
         super().__init__(
             input_spec=kwargs.pop("input_spec"),

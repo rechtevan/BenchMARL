@@ -61,6 +61,10 @@ class LSTM(torch.nn.Module):
         bias: bool,
         time_dim: int = -2,
     ):
+        """Initialize the _LstmNet.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -192,6 +196,10 @@ class MultiAgentLSTM(torch.nn.Module):
         bias: bool,
         compile: bool,
     ):
+        """Initialize the MultiAgentLstm.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__()
         self.input_size = input_size
         self.n_agents = n_agents
@@ -202,7 +210,7 @@ class MultiAgentLSTM(torch.nn.Module):
         self.n_layers = n_layers
         self.bias = bias
         self.dropout = dropout
-        self.compile = compile
+        self.compile = compile  # type: ignore[method-assign,assignment]  # Dynamic compile flag assignment
 
         effective_input_size = (
             input_size * self.n_agents if self.centralised else input_size
@@ -410,6 +418,10 @@ class Lstm(Model):
         compile: bool,
         **kwargs,
     ):
+        """Initialize the Lstm model.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(
             input_spec=kwargs.pop("input_spec"),
             output_spec=kwargs.pop("output_spec"),
@@ -575,10 +587,10 @@ class Lstm(Model):
             )
             c_0 = h_0.clone()
             if self.share_params:
-                output, _, _ = self.lstm[0](input, is_init, h_0, c_0)
+                output, _, _ = self.lstm[0](input, is_init, h_0, c_0)  # type: ignore[index]  # ModuleList indexing
             else:
                 outputs = []
-                for net in self.lstm:
+                for net in self.lstm:  # type: ignore[attr-defined]  # ModuleList iteration
                     output, _, _ = net(input, is_init, h_0, c_0)
                     outputs.append(output)
                 output = torch.stack(outputs, dim=-2)

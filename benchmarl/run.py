@@ -29,8 +29,8 @@ def hydra_experiment(cfg: DictConfig) -> None:
 
     """
     hydra_choices = HydraConfig.get().runtime.choices
-    task_name = hydra_choices.task
-    algorithm_name = hydra_choices.algorithm
+    task_name = hydra_choices.task  # type: ignore[attr-defined]  # HydraConfig choices has task
+    algorithm_name = hydra_choices.algorithm  # type: ignore[attr-defined]  # HydraConfig choices has algorithm
 
     print(f"\nAlgorithm: {algorithm_name}, Task: {task_name}")
     print("\nLoaded config:\n")

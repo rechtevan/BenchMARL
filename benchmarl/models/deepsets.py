@@ -76,6 +76,10 @@ class Deepsets(Model):
         global_nn_activation_class: type[nn.Module],
         **kwargs,
     ):
+        """Initialize the Deepsets model.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
         self.aggr = aggr
         self.local_nn_num_cells = local_nn_num_cells

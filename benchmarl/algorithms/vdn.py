@@ -30,6 +30,10 @@ class Vdn(Algorithm):
     """
 
     def __init__(self, delay_value: bool, loss_function: str, **kwargs):
+        """Initialize the VDN algorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
 
         self.delay_value = delay_value

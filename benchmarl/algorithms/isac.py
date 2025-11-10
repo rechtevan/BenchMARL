@@ -68,6 +68,10 @@ class Isac(Algorithm):
         use_tanh_normal: bool,
         **kwargs,
     ):
+        """Initialize the ISAC algorithm instance.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(**kwargs)
 
         self.share_param_critic = share_param_critic
@@ -145,7 +149,7 @@ class Isac(Algorithm):
         return loss_module, True
 
     def _get_parameters(self, group: str, loss: LossModule) -> Dict[str, Iterable]:
-        items = {
+        items: Dict[str, Iterable] = {
             "loss_actor": list(loss.actor_network_params.flatten_keys().values()),
             "loss_qvalue": list(loss.qvalue_network_params.flatten_keys().values()),
         }

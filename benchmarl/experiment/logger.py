@@ -72,6 +72,10 @@ class Logger:
         project_name: str,
         wandb_extra_kwargs: Dict[str, Any],
     ):
+        """Initialize the Logger.
+
+        Parameters are documented in the class docstring.
+        """
         self.experiment_config = experiment_config
         self.algorithm_name = algorithm_name
         self.environment_name = environment_name
@@ -80,6 +84,7 @@ class Logger:
         self.group_map = group_map
         self.seed = seed
 
+        self.json_writer: Optional[JsonWriter]
         if experiment_config.create_json:
             self.json_writer = JsonWriter(
                 folder=folder_name,
@@ -90,7 +95,7 @@ class Logger:
                 seed=seed,
             )
         else:
-            self.json_writer: JsonWriter | None = None
+            self.json_writer = None
 
         self.loggers: List[torchrl.record.loggers.Logger] = []
         for logger_name in experiment_config.loggers:
@@ -276,7 +281,7 @@ class Logger:
         ) / len(rollouts)
 
         if self.json_writer is not None:
-            self.json_writer.write(  # type: ignore[call-arg]
+            self.json_writer.write(
                 metrics=json_metrics,
                 total_frames=total_frames,
                 evaluation_step=total_frames
@@ -320,7 +325,7 @@ class Logger:
             if isinstance(logger, WandbLogger):
                 logger.experiment.log({}, commit=True)
 
-    def log(self, dict_to_log: Dict, step: int | None = None):
+    def log(self, dict_to_log: Dict, step: Optional[int] = None):
         """Perform log operation.
 
         Returns:
@@ -436,17 +441,17 @@ class Logger:
     ) -> Tensor:
         # Each element in the list is the episode reward (with shape n_episodes) for the group at the global done,
         # so they will have same shape as done is shared
-        episode_rewards_tensor = torch.stack(episode_rewards, dim=0).mean(  # type: ignore[assignment]
+        episode_rewards_tensor = torch.stack(episode_rewards, dim=0).mean(
             0
         )  # Mean over groups
-        if episode_rewards_tensor.numel() > 0:  # type: ignore[union-attr]
+        if episode_rewards_tensor.numel() > 0:
             self._log_min_mean_max(
                 to_log,
                 f"{prefix}/reward/episode_reward",
-                episode_rewards_tensor,  # type: ignore[arg-type]
+                episode_rewards_tensor,
             )
 
-        return episode_rewards_tensor  # type: ignore[return-value]
+        return episode_rewards_tensor
 
     def _log_min_mean_max(self, to_log: Dict[str, Any], key: str, value: Tensor):
         to_log.update(
@@ -482,6 +487,10 @@ class JsonWriter:
         environment_name: str,
         seed: int,
     ):
+        """Initialize the JsonWriter.
+
+        Parameters are documented in the class docstring.
+        """
         self.path = Path(folder) / Path(name)
         self.run_data: dict[str, Any] = {"absolute_metrics": {}}
         self.data = {
@@ -491,7 +500,7 @@ class JsonWriter:
         }
 
     def write(
-        self, total_frames: int, metrics: Dict[str, List[Tensor]], evaluation_step: int
+        self, total_frames: int, metrics: Dict[str, Tensor], evaluation_step: int
     ):
         """Writes a step into the json reporting file.
 
@@ -502,9 +511,9 @@ class JsonWriter:
             evaluation_step (int): the evaluation step
 
         """
-        metrics_list = {k: val.tolist() for k, val in metrics.items()}  # type: ignore[union-attr]
+        metrics_list = {k: val.tolist() for k, val in metrics.items()}
         step_metrics: dict[str, Any] = {"step_count": total_frames}
-        step_metrics.update(metrics_list)  # type: ignore[arg-type]
+        step_metrics.update(metrics_list)
         step_str = f"step_{evaluation_step}"
         if step_str in self.run_data:
             self.run_data[step_str].update(step_metrics)

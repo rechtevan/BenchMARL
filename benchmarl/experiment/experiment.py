@@ -18,7 +18,7 @@ import warnings
 from collections import OrderedDict, deque
 from dataclasses import MISSING, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Deque
 
 import torch
 from tensordict import TensorDictBase
@@ -221,6 +221,8 @@ class ExperimentConfig:
             return self.max_n_frames
         elif self.max_n_iters is not None:
             return self.max_n_iters * self.collected_frames_per_batch(on_policy)
+        else:
+            raise ValueError("Both max_n_frames and max_n_iters are None")
 
     def get_max_n_iters(self, on_policy: bool) -> int:
         """Get the maximum number of experiment iterations before the experiment ends.
@@ -334,6 +336,10 @@ class Experiment(CallbackNotifier):
         critic_model_config: ModelConfig | None = None,
         callbacks: list[Callback] | None = None,
     ):
+        """Initialize the Experiment.
+
+        Parameters are documented in the class docstring.
+        """
         super().__init__(
             experiment=self, callbacks=callbacks if callbacks is not None else []
         )
@@ -361,10 +367,10 @@ class Experiment(CallbackNotifier):
 
         self._setup()
 
-        self.total_time = 0
+        self.total_time = 0.0
         self.total_frames = 0
         self.n_iters_performed = 0
-        self.mean_return = 0
+        self.mean_return = 0.0
 
         if self.config.restore_file is not None:
             self._load_experiment()
@@ -399,10 +405,10 @@ class Experiment(CallbackNotifier):
                             " layer of sequence models"
                         )
 
-        if self.algorithm_config in (MappoConfig, IppoConfig):
+        if isinstance(self.algorithm_config, (MappoConfig, IppoConfig)):
             critic_model_config = self.critic_model_config
             if isinstance(critic_model_config, SequenceModelConfig):
-                critic_model_config = self.critic_model_config.model_configs[0]
+                critic_model_config = self.critic_model_config.model_configs[0]  # type: ignore[attr-defined]  # SequenceModelConfig has model_configs
             if (
                 isinstance(critic_model_config, GnnConfig)
                 and critic_model_config.topology == "from_pos"
@@ -565,7 +571,7 @@ class Experiment(CallbackNotifier):
         )
         self.environment_name = self.task.env_name().lower()
         self.task_name = self.task.name.lower()
-        self._checkpointed_files = deque([])
+        self._checkpointed_files: deque[Path] = deque([])
 
         if self.config.save_folder is not None:
             # If the user specified a folder for the experiment we use that
@@ -710,7 +716,7 @@ class Experiment(CallbackNotifier):
             self.mean_return = self.logger.log_collection(
                 batch,
                 total_frames=self.total_frames,
-                task=self.task,
+                task=self.task,  # type: ignore[arg-type]  # TaskClass is compatible with Task
                 step=self.n_iters_performed,
             )
             pbar.set_description(f"mean return = {self.mean_return}", refresh=False)
@@ -906,7 +912,7 @@ class Experiment(CallbackNotifier):
 
             else:
                 video_frames = None
-                callback = None
+                callback = None  # type: ignore[assignment]  # Optional callback
 
             if self.test_env.batch_size == ():
                 rollouts = []

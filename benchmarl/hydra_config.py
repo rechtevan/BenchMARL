@@ -81,7 +81,9 @@ def load_task_config_from_hydra(cfg: DictConfig, task_name: str) -> TaskClass:
     if is_dataclass(cfg_dict_checked):
         cfg_dict_checked = cfg_dict_checked.__dict__
     cfg_dict_checked = _type_check_task_config(
-        environment_name, inner_task_name, cfg_dict_checked
+        environment_name,
+        inner_task_name,
+        cfg_dict_checked,  # type: ignore[arg-type]  # OmegaConf to_object returns compatible type
     )  # Only needed for the warning
     return task_config_registry[task_name].get_task(cfg_dict_checked)
 
@@ -96,7 +98,7 @@ def load_experiment_config_from_hydra(cfg: DictConfig) -> ExperimentConfig:
         :class:`~benchmarl.experiment.ExperimentConfig`
 
     """
-    return OmegaConf.to_object(cfg)
+    return OmegaConf.to_object(cfg)  # type: ignore[return-value]  # OmegaConf returns correct type
 
 
 def load_algorithm_config_from_hydra(cfg: DictConfig) -> AlgorithmConfig:
@@ -109,7 +111,7 @@ def load_algorithm_config_from_hydra(cfg: DictConfig) -> AlgorithmConfig:
         :class:`~benchmarl.algorithms.AlgorithmConfig`
 
     """
-    return OmegaConf.to_object(cfg)
+    return OmegaConf.to_object(cfg)  # type: ignore[return-value]  # OmegaConf returns correct type
 
 
 def load_model_config_from_hydra(cfg: DictConfig) -> ModelConfig:
@@ -134,7 +136,7 @@ def load_model_config_from_hydra(cfg: DictConfig) -> ModelConfig:
         model_class = model_config_registry[cfg.name]
         return model_class(
             **parse_model_config(
-                OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)
+                OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)  # type: ignore[arg-type]  # OmegaConf returns dict
             )
         )
 
@@ -172,7 +174,7 @@ def reload_experiment_from_file(restore_file: str) -> Experiment:
     ):
         cfg = compose(
             config_name="config",
-            overrides=OmegaConf.load(Path(hydra_folder) / "overrides.yaml"),
+            overrides=OmegaConf.load(Path(hydra_folder) / "overrides.yaml"),  # type: ignore[arg-type]  # OmegaConf.load returns compatible type
             return_hydra_config=True,
         )
         task_name = cfg.hydra.runtime.choices.task
