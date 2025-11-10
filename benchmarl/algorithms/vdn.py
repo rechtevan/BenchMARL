@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of VDN algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Tuple, Type
+from typing import Any, Dict, Iterable, Tuple, Type
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule, TensorDictSequential
@@ -145,6 +147,18 @@ class Vdn(Algorithm):
         return TensorDictSequential(*policy_for_loss, greedy)
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for VDN training.
+
+        Aggregates group-level done, terminated, and reward values to environment level.
+        Done and terminated flags use any() aggregation, while rewards use mean().
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with aggregated environment-level keys.
+        """
         keys = list(batch.keys(True, True))
 
         done_key = ("next", "done")
@@ -175,6 +189,17 @@ class Vdn(Algorithm):
     #####################
 
     def get_mixer(self, group: str) -> TensorDictModule:
+        """Create the VDN mixing network module.
+
+        Builds a simple mixer that sums per-agent Q-values to produce a joint Q-value.
+        VDN implements additive value decomposition for cooperative multi-agent learning.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the VDN mixing network.
+        """
         n_agents = len(self.group_map[group])
         mixer = TensorDictModule(
             module=VDNMixer(
@@ -192,21 +217,41 @@ class Vdn(Algorithm):
 class VdnConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Vdn`."""
 
-    delay_value: bool = MISSING
-    loss_function: str = MISSING
+    delay_value: Any = MISSING
+    loss_function: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Vdn class.
+        """
         return Vdn
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            False, as VDN does not support continuous actions.
+        """
         return False
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            True, as VDN supports discrete actions.
+        """
         return True
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            False, as VDN is an off-policy algorithm.
+        """
         return False

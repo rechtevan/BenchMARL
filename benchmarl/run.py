@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Hydra entry point for running BenchMARL experiments from command line."""
+
 import hydra
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf

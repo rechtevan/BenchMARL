@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Dispersion task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -24,9 +27,9 @@ class TaskConfig:
         penalise_by_time: Whether to penalize agents based on time taken.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    n_food: int = MISSING
-    share_reward: bool = MISSING
-    food_radius: float = MISSING
-    penalise_by_time: bool = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    n_food: Any = MISSING
+    share_reward: Any = MISSING
+    food_radius: Any = MISSING
+    penalise_by_time: Any = MISSING

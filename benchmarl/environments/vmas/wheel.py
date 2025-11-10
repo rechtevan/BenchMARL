@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Wheel task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -23,8 +27,8 @@ class TaskConfig:
         desired_velocity: Target angular velocity for the wheel.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    line_length: float = MISSING
-    line_mass: float = MISSING
-    desired_velocity: float = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    line_length: Any = MISSING
+    line_mass: Any = MISSING
+    desired_velocity: Any = MISSING

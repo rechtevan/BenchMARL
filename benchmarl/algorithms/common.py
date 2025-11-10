@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Common base classes and utilities for multi-agent reinforcement learning algorithms."""
+
 import pathlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -141,7 +143,7 @@ class Algorithm(ABC):
         return self._losses_and_updaters[group]
 
     def get_replay_buffer(
-        self, group: str, transforms: List[Transform] = None
+        self, group: str, transforms: Optional[List[Transform]] = None
     ) -> ReplayBuffer:
         """Get the ReplayBuffer for a specific group.
 

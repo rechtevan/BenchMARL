@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Joint Passage Size task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -24,9 +28,9 @@ class TaskConfig:
         observe_joint_angle: Whether agents observe the joint angle.
     """
 
-    max_steps: int = MISSING
-    n_passages: int = MISSING
-    fixed_passage: bool = MISSING
-    random_start_angle: bool = MISSING
-    random_goal_angle: bool = MISSING
-    observe_joint_angle: bool = MISSING
+    max_steps: Any = MISSING
+    n_passages: Any = MISSING
+    fixed_passage: Any = MISSING
+    random_start_angle: Any = MISSING
+    random_goal_angle: Any = MISSING
+    observe_joint_angle: Any = MISSING

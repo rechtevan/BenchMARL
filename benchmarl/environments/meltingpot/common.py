@@ -3,6 +3,8 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
+"""Common utilities and base classes for MeltingPot environment wrappers."""
+
 import copy
 from typing import Callable, Dict, List, Optional
 
@@ -39,6 +41,17 @@ class MeltingPotClass(TaskClass):
         seed: Optional[int],
         device: DEVICE_TYPING,
     ) -> Callable[[], EnvBase]:
+        """Get the environment creation function.
+
+        Args:
+            num_envs: Number of parallel environments.
+            continuous_actions: Whether to use continuous actions.
+            seed: Random seed for reproducibility.
+            device: Device to create environment on.
+
+        Returns:
+            Function that creates the environment.
+        """
         from torchrl.envs.libs.meltingpot import MeltingpotEnv
 
         config = copy.deepcopy(self.config)
@@ -51,21 +64,60 @@ class MeltingPotClass(TaskClass):
         )
 
     def supports_continuous_actions(self) -> bool:
+        """Check if environment supports continuous actions.
+
+        Returns:
+            True if continuous actions are supported, False otherwise.
+        """
         return False
 
     def supports_discrete_actions(self) -> bool:
+        """Check if environment supports discrete actions.
+
+        Returns:
+            True if discrete actions are supported, False otherwise.
+        """
         return True
 
     def has_render(self, env: EnvBase) -> bool:
+        """Check if environment supports rendering.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            True if rendering is supported, False otherwise.
+        """
         return True
 
     def max_steps(self, env: EnvBase) -> int:
+        """Return the maximum number of steps per episode.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Maximum steps per episode, or None if unlimited.
+        """
         return self.config.get("max_steps", 100)
 
     def group_map(self, env: EnvBase) -> Dict[str, List[str]]:
+        """Return the mapping of agent groups.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Dictionary mapping group names to agent lists.
+        """
         return env.group_map
 
     def get_env_transforms(self, env: EnvBase) -> List[Transform]:
+        """Get env transforms.
+
+        Returns:
+            The requested env transforms.
+        """
         interaction_inventories_keys = [
             (group, "observation", "INTERACTION_INVENTORIES")
             for group in self.group_map(env).keys()
@@ -85,6 +137,11 @@ class MeltingPotClass(TaskClass):
         )
 
     def get_replay_buffer_transforms(self, env: EnvBase, group: str) -> List[Transform]:
+        """Get replay buffer transforms.
+
+        Returns:
+            The requested replay buffer transforms.
+        """
         return [
             DTypeCastTransform(
                 dtype_in=torch.uint8,
@@ -100,6 +157,14 @@ class MeltingPotClass(TaskClass):
         ]
 
     def state_spec(self, env: EnvBase) -> Optional[Composite]:
+        """Return the state specification.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            State specification for the environment, or None if not applicable.
+        """
         observation_spec = env.observation_spec.clone()
         for group in self.group_map(env):
             del observation_spec[group]
@@ -110,9 +175,22 @@ class MeltingPotClass(TaskClass):
         return observation_spec
 
     def action_mask_spec(self, env: EnvBase) -> Optional[Composite]:
+        """Perform action mask spec operation.
+
+        Returns:
+            Result of the operation.
+        """
         return None
 
     def observation_spec(self, env: EnvBase) -> Composite:
+        """Return the observation specification.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Observation specification for the environment.
+        """
         observation_spec = env.observation_spec.clone()
         for group_key in list(observation_spec.keys()):
             if group_key not in self.group_map(env).keys():
@@ -120,6 +198,11 @@ class MeltingPotClass(TaskClass):
         return observation_spec
 
     def info_spec(self, env: EnvBase) -> Optional[Composite]:
+        """Perform info spec operation.
+
+        Returns:
+            Result of the operation.
+        """
         observation_spec = env.observation_spec.clone()
         for group_key in list(observation_spec.keys()):
             if group_key not in self.group_map(env).keys():
@@ -130,14 +213,32 @@ class MeltingPotClass(TaskClass):
         return observation_spec
 
     def action_spec(self, env: EnvBase) -> Composite:
+        """Return the action specification.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Action specification for the environment.
+        """
         return env.full_action_spec
 
     @staticmethod
     def env_name() -> str:
+        """Return the environment name.
+
+        Returns:
+            Name of the environment.
+        """
         return "meltingpot"
 
     @staticmethod
     def render_callback(experiment, env: EnvBase, data: TensorDictBase):
+        """Perform render callback operation.
+
+        Returns:
+            Result of the operation.
+        """
         return data.get("RGB")
 
 
@@ -196,4 +297,9 @@ class MeltingPotTask(Task):
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
         return MeltingPotClass

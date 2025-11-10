@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Utilities for processing and visualizing evaluation results from experiments."""
+
 import collections
 import importlib
 import json
@@ -86,7 +88,7 @@ def load_and_merge_json_dicts(
     for file in json_input_files:
         with open(file) as f:
             dicts.append(json.load(f))
-    full_dict = {}
+    full_dict: Dict = {}
     for single_dict in dicts:
         update(full_dict, single_dict)
 
@@ -155,6 +157,11 @@ class Plotting:
         env_name: str,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
     ):
+        """Perform create matrices operation.
+
+        Returns:
+            Result of the operation.
+        """
         return create_matrices_for_rliable(
             data_dictionary=processed_data,
             environment_name=env_name,
@@ -172,6 +179,11 @@ class Plotting:
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
         **kwargs,
     ):
+        """Perform performance profile figure operation.
+
+        Returns:
+            Result of the operation.
+        """
         return performance_profiles(
             environment_comparison_matrix,
             metric_name=metric_name,
@@ -187,6 +199,11 @@ class Plotting:
         save_tabular_as_latex: bool = True,
         **kwargs,
     ):
+        """Perform aggregate scores operation.
+
+        Returns:
+            Result of the operation.
+        """
         return aggregate_scores(
             dictionary=environment_comparison_matrix,
             metric_name=metric_name,
@@ -203,6 +220,11 @@ class Plotting:
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
         **kwargs,
     ):
+        """Perform probability of improvement operation.
+
+        Returns:
+            Result of the operation.
+        """
         return probability_of_improvement(
             environment_comparison_matrix,
             algorithms_to_compare=algorithms_to_compare,
@@ -218,6 +240,11 @@ class Plotting:
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
         **kwargs,
     ):
+        """Perform environemnt sample efficiency curves operation.
+
+        Returns:
+            Result of the operation.
+        """
         return sample_efficiency_curves(
             dictionary=sample_effeciency_matrix,
             metric_name=metric_name,
@@ -238,6 +265,11 @@ class Plotting:
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
         **kwargs,
     ):
+        """Perform task sample efficiency curves operation.
+
+        Returns:
+            Result of the operation.
+        """
         return plot_single_task(
             processed_data=processed_data,
             environment_name=env,

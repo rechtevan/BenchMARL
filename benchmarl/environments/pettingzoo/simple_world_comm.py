@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""PettingZoo Simple World Comm task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -26,10 +29,10 @@ class TaskConfig:
         num_forests: Number of forest areas (provide cover/partial observability).
     """
 
-    task: str = MISSING
-    max_cycles: int = MISSING
-    num_good: int = MISSING
-    num_adversaries: int = MISSING
-    num_obstacles: int = MISSING
-    num_food: int = MISSING
-    num_forests: int = MISSING
+    task: Any = MISSING
+    max_cycles: Any = MISSING
+    num_good: Any = MISSING
+    num_adversaries: Any = MISSING
+    num_obstacles: Any = MISSING
+    num_food: Any = MISSING
+    num_forests: Any = MISSING

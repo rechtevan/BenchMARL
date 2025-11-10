@@ -3,9 +3,12 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
+
+"""Implementation of MASAC algorithm for multi-agent reinforcement learning."""
+
 import warnings
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Optional, Tuple, Type, Union
+from typing import Any, Dict, Iterable, Optional, Tuple, Type, Union
 
 import torch
 import torch.nn.functional
@@ -265,6 +268,18 @@ class Masac(Algorithm):
         return policy_for_loss
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for MASAC training.
+
+        Ensures nested keys for done, terminated, and reward are properly set
+        at the group level by expanding environment-level values to match group shape.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with nested done, terminated, and reward keys.
+        """
         keys = list(batch.keys(True, True))
         group_shape = batch.get(group).shape
 
@@ -298,6 +313,18 @@ class Masac(Algorithm):
     #####################
 
     def get_discrete_value_module_coupled(self, group: str) -> TensorDictModule:
+        """Create coupled centralized value module for discrete actions.
+
+        Predicts n_agents x n_actions values with access to global state.
+        This approach is theoretically sound but may have many outputs for
+        large numbers of agents. For scalability, consider using the decoupled version.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the coupled discrete action-value critic.
+        """
         # Predict n_agents x n_actions values having access to the global state
         # this is more theoretically sound but might have a lot of outputs, for large number of agents you
         # may want to use the decoupled version
@@ -340,6 +367,18 @@ class Masac(Algorithm):
         return value_module
 
     def get_discrete_value_module_decoupled(self, group: str) -> TensorDictModule:
+        """Create decoupled centralized value module for discrete actions.
+
+        Predicts n_actions values per agent with access to global state and
+        other agents' actions, processing all agents in parallel. More scalable
+        than the coupled version for large numbers of agents.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the decoupled discrete action-value critic.
+        """
         # Predict n_actions values having access to the global state and the actions of other agents,
         # do this for all agents in parallel
         n_agents = len(self.group_map[group])
@@ -470,6 +509,17 @@ class Masac(Algorithm):
         return TensorDictSequential(*modules)
 
     def get_continuous_value_module(self, group: str) -> TensorDictModule:
+        """Create centralized value module for continuous actions.
+
+        Builds a critic that estimates state-action values using global state
+        and all agents' actions. Supports both shared and independent parameters.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the continuous state-action value critic.
+        """
         n_agents = len(self.group_map[group])
         modules = []
 
@@ -588,36 +638,61 @@ def _others_actions(logits, n_actions, n_agents):
 class MasacConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Masac`."""
 
-    share_param_critic: bool = MISSING
-    num_qvalue_nets: int = MISSING
-    loss_function: str = MISSING
-    delay_qvalue: bool = MISSING
-    target_entropy: Union[float, str] = MISSING
-    discrete_target_entropy_weight: float = MISSING
-    alpha_init: float = MISSING
-    min_alpha: Optional[float] = MISSING
-    max_alpha: Optional[float] = MISSING
-    fixed_alpha: bool = MISSING
-    scale_mapping: str = MISSING
-    use_tanh_normal: bool = MISSING
-    coupled_discrete_values: bool = MISSING
+    share_param_critic: Any = MISSING
+    num_qvalue_nets: Any = MISSING
+    loss_function: Any = MISSING
+    delay_qvalue: Any = MISSING
+    target_entropy: Any = MISSING
+    discrete_target_entropy_weight: Any = MISSING
+    alpha_init: Any = MISSING
+    min_alpha: Any = MISSING
+    max_alpha: Any = MISSING
+    fixed_alpha: Any = MISSING
+    scale_mapping: Any = MISSING
+    use_tanh_normal: Any = MISSING
+    coupled_discrete_values: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Masac class.
+        """
         return Masac
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            True, as MASAC supports continuous actions.
+        """
         return True
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            True, as MASAC supports discrete actions.
+        """
         return True
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            False, as MASAC is an off-policy algorithm.
+        """
         return False
 
     @staticmethod
     def has_centralized_critic() -> bool:
+        """Check if algorithm uses a centralized critic.
+
+        Returns:
+            True, as MASAC uses a centralized critic.
+        """
         return True

@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Ball Trajectory task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -19,5 +22,5 @@ class TaskConfig:
         joints: Whether the ball is connected with joints to agents.
     """
 
-    max_steps: int = MISSING
-    joints: bool = MISSING
+    max_steps: Any = MISSING
+    joints: Any = MISSING

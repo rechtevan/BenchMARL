@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Passage task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -21,6 +25,6 @@ class TaskConfig:
         shared_reward: Whether to use shared rewards across all agents.
     """
 
-    max_steps: int = MISSING
-    n_passages: int = MISSING
-    shared_reward: bool = MISSING
+    max_steps: Any = MISSING
+    n_passages: Any = MISSING
+    shared_reward: Any = MISSING

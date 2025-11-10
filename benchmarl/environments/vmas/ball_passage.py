@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Ball Passage task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -21,7 +24,7 @@ class TaskConfig:
         random_start_angle: Whether to randomize the initial ball angle.
     """
 
-    max_steps: int = MISSING
-    n_passages: int = MISSING
-    fixed_passage: bool = MISSING
-    random_start_angle: bool = MISSING
+    max_steps: Any = MISSING
+    n_passages: Any = MISSING
+    fixed_passage: Any = MISSING
+    random_start_angle: Any = MISSING

@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""PettingZoo Simple Reference task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -21,6 +24,6 @@ class TaskConfig:
         local_ratio: Ratio of local to global rewards (0=fully global, 1=fully local).
     """
 
-    task: str = MISSING
-    max_cycles: int = MISSING
-    local_ratio: float = MISSING
+    task: Any = MISSING
+    max_cycles: Any = MISSING
+    local_ratio: Any = MISSING

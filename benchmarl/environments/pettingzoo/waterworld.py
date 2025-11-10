@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""PettingZoo Waterworld task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -39,24 +42,24 @@ class TaskConfig:
         speed_features: Whether to include speed in observations.
     """
 
-    task: str = MISSING
-    max_cycles: int = MISSING
-    n_pursuers: int = MISSING
-    n_evaders: int = MISSING
-    n_poisons: int = MISSING
-    n_obstacles: int = MISSING
-    n_coop: int = MISSING
-    n_sensors: int = MISSING
-    sensor_range: float = MISSING
-    radius: float = MISSING
-    obstacle_radius: float = MISSING
-    pursuer_max_accel: float = MISSING
-    pursuer_speed: float = MISSING
-    evader_speed: float = MISSING
-    poison_speed: float = MISSING
-    poison_reward: float = MISSING
-    food_reward: float = MISSING
-    encounter_reward: float = MISSING
-    thrust_penalty: float = MISSING
-    local_ratio: float = MISSING
-    speed_features: bool = MISSING
+    task: Any = MISSING
+    max_cycles: Any = MISSING
+    n_pursuers: Any = MISSING
+    n_evaders: Any = MISSING
+    n_poisons: Any = MISSING
+    n_obstacles: Any = MISSING
+    n_coop: Any = MISSING
+    n_sensors: Any = MISSING
+    sensor_range: Any = MISSING
+    radius: Any = MISSING
+    obstacle_radius: Any = MISSING
+    pursuer_max_accel: Any = MISSING
+    pursuer_speed: Any = MISSING
+    evader_speed: Any = MISSING
+    poison_speed: Any = MISSING
+    poison_reward: Any = MISSING
+    food_reward: Any = MISSING
+    encounter_reward: Any = MISSING
+    thrust_penalty: Any = MISSING
+    local_ratio: Any = MISSING
+    speed_features: Any = MISSING

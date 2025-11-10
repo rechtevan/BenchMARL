@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of IQL algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Tuple, Type
+from typing import Any, Dict, Iterable, Tuple, Type
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule, TensorDictSequential
@@ -141,6 +143,18 @@ class Iql(Algorithm):
         return TensorDictSequential(*policy_for_loss, greedy)
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for IQL training.
+
+        Ensures nested keys for done, terminated, and reward are properly set
+        at the group level by expanding environment-level values to match group shape.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with nested done, terminated, and reward keys.
+        """
         keys = list(batch.keys(True, True))
         group_shape = batch.get(group).shape
 
@@ -178,21 +192,41 @@ class Iql(Algorithm):
 class IqlConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Iql`."""
 
-    delay_value: bool = MISSING
-    loss_function: str = MISSING
+    delay_value: Any = MISSING
+    loss_function: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Iql class.
+        """
         return Iql
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            False, as IQL does not support continuous actions.
+        """
         return False
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            True, as IQL supports discrete actions.
+        """
         return True
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            False, as IQL is an off-policy algorithm.
+        """
         return False

@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Flocking task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -22,7 +25,7 @@ class TaskConfig:
         collision_reward: Reward/penalty for collisions with obstacles or other agents.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    n_obstacles: int = MISSING
-    collision_reward: float = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    n_obstacles: Any = MISSING
+    collision_reward: Any = MISSING

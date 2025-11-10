@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Callback system for experiment lifecycle hooks."""
+
 from __future__ import annotations
 
 from tensordict import TensorDictBase

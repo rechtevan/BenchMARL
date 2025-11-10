@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Simple Spread task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -21,6 +25,6 @@ class TaskConfig:
         n_agents: Number of agents in the environment.
     """
 
-    max_steps: int = MISSING
-    obs_agents: bool = MISSING
-    n_agents: int = MISSING
+    max_steps: Any = MISSING
+    obs_agents: Any = MISSING
+    n_agents: Any = MISSING

@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Common base classes and utilities for BenchMARL neural network models."""
+
 import pathlib
 import warnings
 from abc import ABC, abstractmethod
@@ -138,12 +140,22 @@ class Model(TensorDictModuleBase, ABC):
 
     @property
     def in_key(self) -> NestedKey:
+        """Perform in key operation.
+
+        Returns:
+            Result of the operation.
+        """
         if len(self.in_keys) > 1:
             raise ValueError("Model has more than one input key")
         return self.in_keys[0]
 
     @property
     def input_leaf_spec(self) -> TensorSpec:
+        """Perform input leaf spec operation.
+
+        Returns:
+            Result of the operation.
+        """
         return self.input_spec[self.in_key]
 
     def _perform_checks(self):
@@ -169,6 +181,11 @@ class Model(TensorDictModuleBase, ABC):
             )
 
     def forward(self, tensordict: TensorDictBase) -> TensorDictBase:
+        """Perform forward operation.
+
+        Returns:
+            Result of the operation.
+        """
         # _check_spec(tensordict, self.input_spec)
         tensordict = self._forward(tensordict)
         # _check_spec(tensordict, self.output_spec)
@@ -354,7 +371,7 @@ class ModelConfig(ABC):
         return Composite()
 
     def _get_model_state_spec_inner(
-        self, model_index: int = 0, group: str = None
+        self, model_index: int = 0, group: Optional[str] = None
     ) -> Composite:
         return self.get_model_state_spec(model_index)
 
@@ -448,6 +465,11 @@ class SequenceModelConfig(ModelConfig):
         action_spec: Composite,
         model_index: int = 0,
     ) -> Model:
+        """Get model.
+
+        Returns:
+            The requested model.
+        """
         n_models = len(self.model_configs)
         if not n_models > 0:
             raise ValueError(
@@ -506,10 +528,20 @@ class SequenceModelConfig(ModelConfig):
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
         return SequenceModel
 
     @property
     def is_critic(self):
+        """Check is critic.
+
+        Returns:
+            Boolean indicating the result.
+        """
         if not hasattr(self, "_is_critic"):
             self._is_critic = False
         return self._is_critic
@@ -521,6 +553,11 @@ class SequenceModelConfig(ModelConfig):
             model_config.is_critic = value
 
     def get_model_state_spec(self, model_index: int = 0) -> Composite:
+        """Get model state spec.
+
+        Returns:
+            The requested model state spec.
+        """
         spec = Composite()
         for i, model_config in enumerate(self.model_configs):
             spec.update(model_config.get_model_state_spec(model_index=i))
@@ -528,13 +565,23 @@ class SequenceModelConfig(ModelConfig):
 
     @property
     def is_rnn(self) -> bool:
-        is_rnn = False
+        """Check is rnn.
+
+        Returns:
+            Boolean indicating the result.
+        """
+        is_rnn_count: int = 0
         for model_config in self.model_configs:
-            is_rnn += model_config.is_rnn
-        return is_rnn
+            is_rnn_count += 1 if model_config.is_rnn else 0
+        return bool(is_rnn_count)
 
     @classmethod
     def get_from_yaml(cls, path: Optional[str] = None):
+        """Load task configuration from YAML file.
+
+        Returns:
+            Task instance loaded from YAML configuration.
+        """
         raise NotImplementedError
 
 
@@ -560,7 +607,12 @@ class EnsembleModelConfig(ModelConfig):
 
     model_configs_map: Dict[str, ModelConfig]
 
-    def get_model(self, agent_group: str, **kwargs) -> Model:
+    def get_model(self, agent_group: str, **kwargs: Any) -> Model:
+        """Get model.
+
+        Returns:
+            The requested model.
+        """
         if agent_group not in self.model_configs_map.keys():
             raise ValueError(
                 f"Environment contains agent group '{agent_group}' not present in the EnsembleModelConfig configuration."
@@ -571,6 +623,12 @@ class EnsembleModelConfig(ModelConfig):
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
+
         class EnsembleModel(Model):
             pass
 
@@ -578,6 +636,11 @@ class EnsembleModelConfig(ModelConfig):
 
     @property
     def is_critic(self):
+        """Check is critic.
+
+        Returns:
+            Boolean indicating the result.
+        """
         if not hasattr(self, "_is_critic"):
             self._is_critic = False
         return self._is_critic
@@ -589,19 +652,31 @@ class EnsembleModelConfig(ModelConfig):
             model_config.is_critic = value
 
     def _get_model_state_spec_inner(
-        self, model_index: int = 0, group: str = None
+        self, model_index: int = 0, group: Optional[str] = None
     ) -> Composite:
+        if group is None:
+            raise ValueError("group must be provided for EnsembleModelConfig")
         return self.model_configs_map[group].get_model_state_spec(
             model_index=model_index
         )
 
     @property
     def is_rnn(self) -> bool:
-        is_rnn = False
+        """Check is rnn.
+
+        Returns:
+            Boolean indicating the result.
+        """
+        is_rnn_count: int = 0
         for model_config in self.model_configs_map.values():
-            is_rnn += model_config.is_rnn
-        return is_rnn
+            is_rnn_count += 1 if model_config.is_rnn else 0
+        return bool(is_rnn_count)
 
     @classmethod
     def get_from_yaml(cls, path: Optional[str] = None):
+        """Load task configuration from YAML file.
+
+        Returns:
+            Task instance loaded from YAML configuration.
+        """
         raise NotImplementedError

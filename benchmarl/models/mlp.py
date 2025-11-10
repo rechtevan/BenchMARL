@@ -4,10 +4,12 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Multi-layer perceptron model implementation for BenchMARL."""
+
 from __future__ import annotations
 
 from dataclasses import MISSING, dataclass
-from typing import Sequence
+from typing import Any, Optional
 
 import torch
 from tensordict import TensorDictBase
@@ -107,7 +109,7 @@ class Mlp(Model):
                     f"MLP input value {input_key} from {self.input_spec} has an invalid shape, maybe you need a CNN or more feature dimensions?"
                 )
         if self.input_has_agent_dim:
-            if input_shape[-1] != self.n_agents:
+            if input_shape is not None and input_shape[-1] != self.n_agents:
                 raise ValueError(
                     "If the MLP input has the agent dimension,"
                     f" the second to last spec dimension should be the number of agents, got {self.input_spec}"
@@ -158,17 +160,22 @@ class Mlp(Model):
 class MlpConfig(ModelConfig):
     """Dataclass config for a :class:`~benchmarl.models.Mlp`."""
 
-    num_cells: Sequence[int] = MISSING
-    layer_class: type[nn.Module] = MISSING
+    num_cells: Any = MISSING
+    layer_class: Any = MISSING
 
-    activation_class: type[nn.Module] = MISSING
+    activation_class: Any = MISSING
     activation_kwargs: dict | None = None
 
-    norm_class: type[nn.Module] = None
+    norm_class: Optional[type[nn.Module]] = None
     norm_kwargs: dict | None = None
 
     num_feature_dims: int = 1
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
         return Mlp

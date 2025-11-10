@@ -3,6 +3,9 @@
 #  This source code is licensed under the license found in the
 #  LICENSE file in the root directory of this source tree.
 #
+
+"""Hydra configuration utilities for loading and reloading experiments."""
+
 import importlib
 from dataclasses import is_dataclass
 from pathlib import Path

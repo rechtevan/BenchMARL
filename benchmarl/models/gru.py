@@ -4,10 +4,12 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""GRU recurrent neural network model implementation for BenchMARL."""
+
 from __future__ import annotations
 
 from dataclasses import MISSING, dataclass
-from typing import Sequence
+from typing import Any, Optional
 
 import torch
 import torch.nn.functional as F
@@ -86,6 +88,11 @@ class GRU(torch.nn.Module):
         is_init,
         h,
     ):
+        """Perform forward operation.
+
+        Returns:
+            Result of the operation.
+        """
         hs = []
         h = list(h.unbind(dim=-2))
         for in_t, init_t in zip(
@@ -135,7 +142,7 @@ def get_net(input_size, hidden_size, n_layers, bias, device, dropout, compile):
         dropout=dropout,
     )
     if compile:
-        gru = torch.compile(gru, mode="reduce-overhead")
+        gru = torch.compile(gru, mode="reduce-overhead")  # type: ignore[assignment]
     return gru
 
 
@@ -195,12 +202,13 @@ class MultiAgentGRU(torch.nn.Module):
         self.dropout = dropout
         self.compile = compile
 
-        if self.centralised:
-            input_size = input_size * self.n_agents
+        effective_input_size = (
+            input_size * self.n_agents if self.centralised else input_size
+        )
 
         agent_networks = [
             get_net(
-                input_size=input_size,
+                input_size=effective_input_size,
                 hidden_size=self.hidden_size,
                 n_layers=self.n_layers,
                 bias=self.bias,
@@ -214,7 +222,7 @@ class MultiAgentGRU(torch.nn.Module):
 
         with torch.device("meta"):
             self._empty_gru = get_net(
-                input_size=input_size,
+                input_size=effective_input_size,
                 hidden_size=self.hidden_size,
                 n_layers=self.n_layers,
                 bias=self.bias,
@@ -233,6 +241,11 @@ class MultiAgentGRU(torch.nn.Module):
         is_init,
         h_0=None,
     ):
+        """Perform forward operation.
+
+        Returns:
+            Result of the operation.
+        """
         # Input and output always have the multiagent dimension
         # Hidden states always have it apart from when it is centralized and share params
         # is_init never has it
@@ -276,7 +289,7 @@ class MultiAgentGRU(torch.nn.Module):
                     self.hidden_size,
                 )
             else:
-                shape = (
+                shape = (  # type: ignore[assignment]
                     batch,
                     self.n_agents,
                     self.n_layers,
@@ -306,6 +319,11 @@ class MultiAgentGRU(torch.nn.Module):
         return output, h_n
 
     def run_net(self, input, is_init, h_0):
+        """Perform run net operation.
+
+        Returns:
+            Result of the operation.
+        """
         if not self.share_params:
             if self.centralised:
                 output, h_n = self.vmap_func_module(
@@ -331,6 +349,12 @@ class MultiAgentGRU(torch.nn.Module):
         return output, h_n
 
     def vmap_func_module(self, module, *args, **kwargs):
+        """Perform vmap func module operation.
+
+        Returns:
+            Result of the operation.
+        """
+
         def exec_module(params, *input):
             with params.to_module(module):
                 return module(*input)
@@ -421,7 +445,7 @@ class Gru(Model):
                 compile=self.compile,
             )
         else:
-            self.gru = nn.ModuleList(
+            self.gru = nn.ModuleList(  # type: ignore[assignment]
                 [
                     get_net(
                         input_size=self.input_features,
@@ -484,7 +508,7 @@ class Gru(Model):
                     f"GRU input value {input_key} from {self.input_spec} has an invalid shape, maybe you need a CNN?"
                 )
         if self.input_has_agent_dim:
-            if input_shape[-1] != self.n_agents:
+            if input_shape is not None and input_shape[-1] != self.n_agents:
                 raise ValueError(
                     "If the GRU input has the agent dimension,"
                     f" the second to last spec dimension should be the number of agents, got {self.input_spec}"
@@ -560,29 +584,44 @@ class Gru(Model):
 class GruConfig(ModelConfig):
     """Dataclass config for a :class:`~benchmarl.models.Gru`."""
 
-    hidden_size: int = MISSING
-    n_layers: int = MISSING
-    bias: bool = MISSING
-    dropout: float = MISSING
-    compile: bool = MISSING
+    hidden_size: Any = MISSING
+    n_layers: Any = MISSING
+    bias: Any = MISSING
+    dropout: Any = MISSING
+    compile: Any = MISSING
 
-    mlp_num_cells: Sequence[int] = MISSING
-    mlp_layer_class: type[nn.Module] = MISSING
-    mlp_activation_class: type[nn.Module] = MISSING
+    mlp_num_cells: Any = MISSING
+    mlp_layer_class: Any = MISSING
+    mlp_activation_class: Any = MISSING
 
     mlp_activation_kwargs: dict | None = None
-    mlp_norm_class: type[nn.Module] = None
+    mlp_norm_class: Optional[type[nn.Module]] = None
     mlp_norm_kwargs: dict | None = None
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
         return Gru
 
     @property
     def is_rnn(self) -> bool:
+        """Check is rnn.
+
+        Returns:
+            Boolean indicating the result.
+        """
         return True
 
     def get_model_state_spec(self, model_index: int = 0) -> Composite:
+        """Get model state spec.
+
+        Returns:
+            The requested model state spec.
+        """
         spec = Composite(
             {
                 f"_hidden_gru_{model_index}": Unbounded(

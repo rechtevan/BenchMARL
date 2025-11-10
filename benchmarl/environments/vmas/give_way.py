@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Give Way task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -23,8 +27,8 @@ class TaskConfig:
         final_reward: Bonus reward given upon successful task completion.
     """
 
-    max_steps: int = MISSING
-    mirror_passage: bool = MISSING
-    observe_rel_pos: bool = MISSING
-    done_on_completion: bool = MISSING
-    final_reward: float = MISSING
+    max_steps: Any = MISSING
+    mirror_passage: Any = MISSING
+    observe_rel_pos: Any = MISSING
+    done_on_completion: Any = MISSING
+    final_reward: Any = MISSING

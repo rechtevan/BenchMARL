@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Convolutional neural network model implementation for BenchMARL."""
+
 from dataclasses import MISSING, dataclass
-from typing import List, Optional, Sequence, Tuple, Type, Union
+from typing import Any, List, Optional, Tuple, Type, Union
 
 import torch
 from tensordict import TensorDictBase
@@ -232,7 +234,11 @@ class Cnn(Model):
                 )
         if not len(self.image_in_keys):
             raise ValueError("CNN found no image inputs, maybe use an MLP?")
-        if self.input_has_agent_dim and input_shape_image[-3] != self.n_agents:
+        if (
+            self.input_has_agent_dim
+            and input_shape_image is not None
+            and input_shape_image[-3] != self.n_agents
+        ):
             raise ValueError(
                 "If the CNN input has the agent dimension,"
                 " the forth to last spec dimension of image inputs should be the number of agents"
@@ -317,24 +323,29 @@ class Cnn(Model):
 class CnnConfig(ModelConfig):
     """Dataclass config for a :class:`~benchmarl.models.Cnn`."""
 
-    cnn_num_cells: Sequence[int] = MISSING
-    cnn_kernel_sizes: Union[Sequence[int], int] = MISSING
-    cnn_strides: Union[Sequence[int], int] = MISSING
-    cnn_paddings: Union[Sequence[int], int] = MISSING
-    cnn_activation_class: Type[nn.Module] = MISSING
+    cnn_num_cells: Any = MISSING
+    cnn_kernel_sizes: Any = MISSING
+    cnn_strides: Any = MISSING
+    cnn_paddings: Any = MISSING
+    cnn_activation_class: Any = MISSING
 
-    mlp_num_cells: Sequence[int] = MISSING
-    mlp_layer_class: Type[nn.Module] = MISSING
-    mlp_activation_class: Type[nn.Module] = MISSING
+    mlp_num_cells: Any = MISSING
+    mlp_layer_class: Any = MISSING
+    mlp_activation_class: Any = MISSING
 
     cnn_activation_kwargs: Optional[dict] = None
-    cnn_norm_class: Type[nn.Module] = None
+    cnn_norm_class: Optional[Type[nn.Module]] = None
     cnn_norm_kwargs: Optional[dict] = None
 
     mlp_activation_kwargs: Optional[dict] = None
-    mlp_norm_class: Type[nn.Module] = None
+    mlp_norm_class: Optional[Type[nn.Module]] = None
     mlp_norm_kwargs: Optional[dict] = None
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
         return Cnn

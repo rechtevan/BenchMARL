@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Graph neural network model implementation for BenchMARL."""
+
 from __future__ import annotations
 
 import importlib
@@ -11,6 +13,7 @@ import inspect
 import warnings
 from dataclasses import MISSING, dataclass
 from math import prod
+from typing import Any
 
 import torch
 from tensordict import TensorDictBase
@@ -145,9 +148,9 @@ class Gnn(Model):
 
         super().__init__(**kwargs)
 
-        if self.pos_features > 0:
+        if self.pos_features is not None and self.pos_features > 0:
             self.pos_features += 1  # We will add also 1-dimensional distance
-        self.edge_features = self.pos_features + self.vel_features
+        self.edge_features = (self.pos_features or 0) + (self.vel_features or 0)
         self.input_features = sum(
             [
                 spec.shape[-1]
@@ -156,9 +159,9 @@ class Gnn(Model):
             ]
         )  # Input keys
         if self.position_key is not None and not self.exclude_pos_from_node_features:
-            self.input_features += self.pos_features - 1
+            self.input_features += (self.pos_features or 0) - 1
         if self.velocity_key is not None:
-            self.input_features += self.vel_features
+            self.input_features += self.vel_features or 0
 
         self.output_features = self.output_leaf_spec.shape[-1]
 
@@ -214,19 +217,31 @@ class Gnn(Model):
             raise ValueError(
                 "exclude_pos_from_node_features needs to be specified when position_key is provided"
             )
-        if self.position_key is not None and self.pos_features <= 0:
+        if self.position_key is not None and (
+            self.pos_features is None or self.pos_features <= 0
+        ):
             raise ValueError(
                 f"Position key specified but pos_features is {self.pos_features}"
             )
-        elif self.position_key is None and self.pos_features > 0:
+        elif (
+            self.position_key is None
+            and self.pos_features is not None
+            and self.pos_features > 0
+        ):
             raise ValueError(
                 f"If no position_key is given, pos_features needs to be 0, got: {self.pos_features}"
             )
-        if self.velocity_key is not None and self.vel_features <= 0:
+        if self.velocity_key is not None and (
+            self.vel_features is None or self.vel_features <= 0
+        ):
             raise ValueError(
                 f"Velocity key specified but vel_features is {self.vel_features}"
             )
-        elif self.velocity_key is None and self.vel_features > 0:
+        elif (
+            self.velocity_key is None
+            and self.vel_features is not None
+            and self.vel_features > 0
+        ):
             raise ValueError(
                 f"If no velocity_key is given, vel_features needs to be 0, got: {self.vel_features}"
             )
@@ -254,7 +269,7 @@ class Gnn(Model):
                     f"GNN input value {input_key} from {self.input_spec} has an invalid shape"
                 )
 
-        if input_shape[-1] != self.n_agents:
+        if input_shape is not None and input_shape[-1] != self.n_agents:
             raise ValueError(
                 f"The second to last input spec dimension should be the number of agents, got {self.input_spec}"
             )
@@ -283,10 +298,13 @@ class Gnn(Model):
                     list(tensordict.keys(True, True)), self.position_key
                 )
                 pos = tensordict.get(self._full_position_key)
-                if pos.shape[-1] != self.pos_features - 1:
+                expected_features = (
+                    (self.pos_features - 1) if self.pos_features is not None else 0
+                )
+                if pos.shape[-1] != expected_features:
                     raise ValueError(
                         f"Position key in tensordict is {pos.shape[-1]}-dimensional, "
-                        f"while model was configured with pos_features={self.pos_features-1}"
+                        f"while model was configured with pos_features={expected_features}"
                     )
             else:
                 pos = tensordict.get(self._full_position_key)
@@ -302,10 +320,13 @@ class Gnn(Model):
                     list(tensordict.keys(True, True)), self.velocity_key
                 )
                 vel = tensordict.get(self._full_velocity_key)
-                if vel.shape[-1] != self.vel_features:
+                expected_vel_features = (
+                    self.vel_features if self.vel_features is not None else 0
+                )
+                if vel.shape[-1] != expected_vel_features:
                     raise ValueError(
                         f"Velocity key in tensordict is {vel.shape[-1]}-dimensional, "
-                        f"while model was configured with vel_features={self.vel_features}"
+                        f"while model was configured with vel_features={expected_vel_features}"
                     )
             else:
                 vel = tensordict.get(self._full_velocity_key)
@@ -313,11 +334,11 @@ class Gnn(Model):
         else:
             vel = None
 
-        input = torch.cat(input, dim=-1)
-        batch_size = input.shape[:-2]
+        input_tensor = torch.cat(input, dim=-1)
+        batch_size = input_tensor.shape[:-2]
 
         graph = _batch_from_dense_to_ptg(
-            x=input,
+            x=input_tensor,
             edge_index=self.edge_index,
             pos=pos,
             vel=vel,
@@ -386,7 +407,9 @@ class Gnn(Model):
         )
 
 
-def _get_edge_index(topology: str, self_loops: bool, n_agents: int, device: str):
+def _get_edge_index(
+    topology: str, self_loops: bool, n_agents: int, device: str
+) -> Tensor | None:
     if topology == "full":
         adjacency = torch.ones(n_agents, n_agents, device=device, dtype=torch.long)
         edge_index, _ = torch_geometric.utils.dense_to_sparse(adjacency)
@@ -413,8 +436,8 @@ def _batch_from_dense_to_ptg(
     x: Tensor,
     edge_index: Tensor | None,
     self_loops: bool,
-    pos: Tensor = None,
-    vel: Tensor = None,
+    pos: Tensor | None = None,
+    vel: Tensor | None = None,
     edge_radius: float | None = None,
 ) -> torch_geometric.data.Batch:
     batch_size = prod(x.shape[:-2])
@@ -466,10 +489,10 @@ def _batch_from_dense_to_ptg(
 class GnnConfig(ModelConfig):
     """Dataclass config for a :class:`~benchmarl.models.Gnn`."""
 
-    topology: str = MISSING
-    self_loops: bool = MISSING
+    topology: Any = MISSING
+    self_loops: Any = MISSING
 
-    gnn_class: type[torch_geometric.nn.MessagePassing] = MISSING
+    gnn_class: Any = MISSING
     gnn_kwargs: dict | None = None
 
     position_key: str | None = None
@@ -481,4 +504,9 @@ class GnnConfig(ModelConfig):
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
         return Gnn

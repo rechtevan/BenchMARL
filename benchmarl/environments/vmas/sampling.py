@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Sampling task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -26,11 +30,11 @@ class TaskConfig:
         spawn_same_pos: Whether agents spawn at the same initial position.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    shared_rew: bool = MISSING
-    n_gaussians: int = MISSING
-    lidar_range: float = MISSING
-    cov: float = MISSING
-    collisions: bool = MISSING
-    spawn_same_pos: bool = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    shared_rew: Any = MISSING
+    n_gaussians: Any = MISSING
+    lidar_range: Any = MISSING
+    cov: Any = MISSING
+    collisions: Any = MISSING
+    spawn_same_pos: Any = MISSING

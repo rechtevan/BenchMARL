@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Balance task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -22,7 +25,7 @@ class TaskConfig:
         package_mass: Mass of the package to carry.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    random_package_pos_on_line: bool = MISSING
-    package_mass: float = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    random_package_pos_on_line: Any = MISSING
+    package_mass: Any = MISSING

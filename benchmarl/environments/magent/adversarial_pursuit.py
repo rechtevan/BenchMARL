@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""MAgent Adversarial Pursuit task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -22,8 +26,8 @@ class TaskConfig:
         extra_features: Whether to include additional features in observations.
     """
 
-    map_size: int = MISSING
-    minimap_mode: bool = MISSING
-    tag_penalty: float = MISSING
-    max_cycles: int = MISSING
-    extra_features: bool = MISSING
+    map_size: Any = MISSING
+    minimap_mode: Any = MISSING
+    tag_penalty: Any = MISSING
+    max_cycles: Any = MISSING
+    extra_features: Any = MISSING

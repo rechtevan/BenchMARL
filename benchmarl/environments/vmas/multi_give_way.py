@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Multi Give Way task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -20,5 +24,5 @@ class TaskConfig:
         agent_collision_penalty: Penalty for collisions between agents.
     """
 
-    max_steps: int = MISSING
-    agent_collision_penalty: float = MISSING
+    max_steps: Any = MISSING
+    agent_collision_penalty: Any = MISSING

@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Core experiment class and configuration for running MARL training."""
+
 from __future__ import annotations
 
 import copy
@@ -58,67 +60,67 @@ class ExperimentConfig:
     To know their meaning, please check out the descriptions in ``benchmarl/conf/experiment/base_experiment.yaml``
     """
 
-    sampling_device: str = MISSING
-    train_device: str = MISSING
-    buffer_device: str = MISSING
+    sampling_device: Any = MISSING
+    train_device: Any = MISSING
+    buffer_device: Any = MISSING
 
-    share_policy_params: bool = MISSING
-    prefer_continuous_actions: bool = MISSING
-    collect_with_grad: bool = MISSING
-    parallel_collection: bool = MISSING
+    share_policy_params: Any = MISSING
+    prefer_continuous_actions: Any = MISSING
+    collect_with_grad: Any = MISSING
+    parallel_collection: Any = MISSING
 
-    gamma: float = MISSING
-    lr: float = MISSING
-    adam_eps: float = MISSING
-    adam_extra_kwargs: dict[str, Any] = MISSING
-    clip_grad_norm: bool = MISSING
-    clip_grad_val: float | None = MISSING
+    gamma: Any = MISSING
+    lr: Any = MISSING
+    adam_eps: Any = MISSING
+    adam_extra_kwargs: Any = MISSING
+    clip_grad_norm: Any = MISSING
+    clip_grad_val: Any = MISSING
 
-    soft_target_update: bool = MISSING
-    polyak_tau: float = MISSING
-    hard_target_update_frequency: int = MISSING
+    soft_target_update: Any = MISSING
+    polyak_tau: Any = MISSING
+    hard_target_update_frequency: Any = MISSING
 
-    exploration_eps_init: float = MISSING
-    exploration_eps_end: float = MISSING
-    exploration_anneal_frames: int | None = MISSING
+    exploration_eps_init: Any = MISSING
+    exploration_eps_end: Any = MISSING
+    exploration_anneal_frames: Any = MISSING
 
-    max_n_iters: int | None = MISSING
-    max_n_frames: int | None = MISSING
+    max_n_iters: Any = MISSING
+    max_n_frames: Any = MISSING
 
-    on_policy_collected_frames_per_batch: int = MISSING
-    on_policy_n_envs_per_worker: int = MISSING
-    on_policy_n_minibatch_iters: int = MISSING
-    on_policy_minibatch_size: int = MISSING
+    on_policy_collected_frames_per_batch: Any = MISSING
+    on_policy_n_envs_per_worker: Any = MISSING
+    on_policy_n_minibatch_iters: Any = MISSING
+    on_policy_minibatch_size: Any = MISSING
 
-    off_policy_collected_frames_per_batch: int = MISSING
-    off_policy_n_envs_per_worker: int = MISSING
-    off_policy_n_optimizer_steps: int = MISSING
-    off_policy_train_batch_size: int = MISSING
-    off_policy_memory_size: int = MISSING
-    off_policy_init_random_frames: int = MISSING
-    off_policy_use_prioritized_replay_buffer: bool = MISSING
-    off_policy_prb_alpha: float = MISSING
-    off_policy_prb_beta: float = MISSING
+    off_policy_collected_frames_per_batch: Any = MISSING
+    off_policy_n_envs_per_worker: Any = MISSING
+    off_policy_n_optimizer_steps: Any = MISSING
+    off_policy_train_batch_size: Any = MISSING
+    off_policy_memory_size: Any = MISSING
+    off_policy_init_random_frames: Any = MISSING
+    off_policy_use_prioritized_replay_buffer: Any = MISSING
+    off_policy_prb_alpha: Any = MISSING
+    off_policy_prb_beta: Any = MISSING
 
-    evaluation: bool = MISSING
-    render: bool = MISSING
-    evaluation_interval: int = MISSING
-    evaluation_episodes: int = MISSING
-    evaluation_deterministic_actions: bool = MISSING
-    evaluation_static: bool = MISSING
+    evaluation: Any = MISSING
+    render: Any = MISSING
+    evaluation_interval: Any = MISSING
+    evaluation_episodes: Any = MISSING
+    evaluation_deterministic_actions: Any = MISSING
+    evaluation_static: Any = MISSING
 
-    loggers: list[str] = MISSING
-    project_name: str = MISSING
-    wandb_extra_kwargs: dict[str, Any] = MISSING
-    create_json: bool = MISSING
+    loggers: Any = MISSING
+    project_name: Any = MISSING
+    wandb_extra_kwargs: Any = MISSING
+    create_json: Any = MISSING
 
-    save_folder: str | None = MISSING
-    restore_file: str | None = MISSING
+    save_folder: Any = MISSING
+    restore_file: Any = MISSING
     restore_map_location: Any | None = MISSING
-    checkpoint_interval: int = MISSING
-    checkpoint_at_end: bool = MISSING
-    keep_checkpoints_num: int | None = MISSING
-    exclude_buffer_from_checkpoint: bool = MISSING
+    checkpoint_interval: Any = MISSING
+    checkpoint_at_end: Any = MISSING
+    keep_checkpoints_num: Any = MISSING
+    exclude_buffer_from_checkpoint: Any = MISSING
 
     def train_batch_size(self, on_policy: bool) -> int:
         """The batch size of tensors used for training.

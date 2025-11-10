@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""PettingZoo MultiWalker task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -30,15 +33,15 @@ class TaskConfig:
         terrain_length: Length of the terrain to traverse.
     """
 
-    task: str = MISSING
-    n_walkers: int = MISSING
-    shared_reward: bool = MISSING
-    max_cycles: int = MISSING
-    position_noise: float = MISSING
-    angle_noise: float = MISSING
-    forward_reward: float = MISSING
-    fall_reward: float = MISSING
-    terminate_reward: float = MISSING
-    terminate_on_fall: bool = MISSING
-    remove_on_fall: bool = MISSING
-    terrain_length: int = MISSING
+    task: Any = MISSING
+    n_walkers: Any = MISSING
+    shared_reward: Any = MISSING
+    max_cycles: Any = MISSING
+    position_noise: Any = MISSING
+    angle_noise: Any = MISSING
+    forward_reward: Any = MISSING
+    fall_reward: Any = MISSING
+    terminate_reward: Any = MISSING
+    terminate_on_fall: Any = MISSING
+    remove_on_fall: Any = MISSING
+    terrain_length: Any = MISSING

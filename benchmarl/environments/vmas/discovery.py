@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Discovery task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -26,11 +29,11 @@ class TaskConfig:
         shared_reward: Whether to use shared rewards across all agents.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    n_targets: int = MISSING
-    lidar_range: float = MISSING
-    covering_range: float = MISSING
-    agents_per_target: int = MISSING
-    targets_respawn: bool = MISSING
-    shared_reward: bool = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    n_targets: Any = MISSING
+    lidar_range: Any = MISSING
+    covering_range: Any = MISSING
+    agents_per_target: Any = MISSING
+    targets_respawn: Any = MISSING
+    shared_reward: Any = MISSING

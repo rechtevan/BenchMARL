@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Multi-backend logger for experiment metrics and visualization."""
+
 import json
 import os
 import warnings
@@ -88,7 +90,7 @@ class Logger:
                 seed=seed,
             )
         else:
-            self.json_writer = None
+            self.json_writer: JsonWriter | None = None
 
         self.loggers: List[torchrl.record.loggers.Logger] = []
         for logger_name in experiment_config.loggers:
@@ -112,6 +114,11 @@ class Logger:
             )
 
     def log_hparams(self, **kwargs):
+        """Perform log hparams operation.
+
+        Returns:
+            Result of the operation.
+        """
         for logger in self.loggers:
             if isinstance(logger, TensorboardLogger):
                 # Tensorboard does not like nested dictionaries -> flatten them
@@ -146,7 +153,12 @@ class Logger:
         total_frames: int,
         step: int,
     ) -> float:
-        to_log = {}
+        """Perform log collection operation.
+
+        Returns:
+            Result of the operation.
+        """
+        to_log: dict[str, Any] = {}
         groups_episode_rewards = []
         gobal_done = self._get_global_done(batch)  # Does not have agent dim
         any_episode_ended = gobal_done.nonzero().numel() > 0
@@ -195,6 +207,11 @@ class Logger:
         return global_episode_rewards.mean().item()
 
     def log_training(self, group: str, training_td: TensorDictBase, step: int):
+        """Perform log training operation.
+
+        Returns:
+            Result of the operation.
+        """
         if not len(self.loggers):
             return
         to_log = {
@@ -210,6 +227,11 @@ class Logger:
         step: int,
         video_frames: Optional[List] = None,
     ):
+        """Perform log evaluation operation.
+
+        Returns:
+            Result of the operation.
+        """
         if (
             not len(self.loggers) and not self.experiment_config.create_json
         ) or not len(rollouts):
@@ -230,8 +252,8 @@ class Logger:
                 max_length_rollout_0 = max(r.batch_size[0], max_length_rollout_0)
             rollouts[i] = r
 
-        to_log = {}
-        json_metrics = {}
+        to_log: dict[str, Any] = {}
+        json_metrics: dict[str, Any] = {}
         for group in self.group_map.keys():
             # returns has shape (n_episodes)
             returns = torch.stack(
@@ -254,7 +276,7 @@ class Logger:
         ) / len(rollouts)
 
         if self.json_writer is not None:
-            self.json_writer.write(
+            self.json_writer.write(  # type: ignore[call-arg]
                 metrics=json_metrics,
                 total_frames=total_frames,
                 evaluation_step=total_frames
@@ -289,11 +311,21 @@ class Logger:
                     logger.log_video("eval_video", vid, step=step)
 
     def commit(self):
+        """Perform commit operation.
+
+        Returns:
+            Result of the operation.
+        """
         for logger in self.loggers:
             if isinstance(logger, WandbLogger):
                 logger.experiment.log({}, commit=True)
 
-    def log(self, dict_to_log: Dict, step: int = None):
+    def log(self, dict_to_log: Dict, step: int | None = None):
+        """Perform log operation.
+
+        Returns:
+            Result of the operation.
+        """
         for logger in self.loggers:
             if isinstance(logger, WandbLogger):
                 logger.experiment.log(dict_to_log, commit=False)
@@ -302,6 +334,11 @@ class Logger:
                     logger.log_scalar(key.replace("/", "_"), value, step=step)
 
     def finish(self):
+        """Perform finish operation.
+
+        Returns:
+            Result of the operation.
+        """
         for logger in self.loggers:
             if isinstance(logger, WandbLogger):
                 import wandb
@@ -395,21 +432,23 @@ class Logger:
         return group_episode_reward
 
     def _log_global_episode_reward(
-        self, episode_rewards: List[Tensor], to_log: Dict[str, Tensor], prefix: str
-    ):
+        self, episode_rewards: List[Tensor], to_log: Dict[str, Any], prefix: str
+    ) -> Tensor:
         # Each element in the list is the episode reward (with shape n_episodes) for the group at the global done,
         # so they will have same shape as done is shared
-        episode_rewards = torch.stack(episode_rewards, dim=0).mean(
+        episode_rewards_tensor = torch.stack(episode_rewards, dim=0).mean(  # type: ignore[assignment]
             0
         )  # Mean over groups
-        if episode_rewards.numel() > 0:
+        if episode_rewards_tensor.numel() > 0:  # type: ignore[union-attr]
             self._log_min_mean_max(
-                to_log, f"{prefix}/reward/episode_reward", episode_rewards
+                to_log,
+                f"{prefix}/reward/episode_reward",
+                episode_rewards_tensor,  # type: ignore[arg-type]
             )
 
-        return episode_rewards
+        return episode_rewards_tensor  # type: ignore[return-value]
 
-    def _log_min_mean_max(self, to_log: Dict[str, Tensor], key: str, value: Tensor):
+    def _log_min_mean_max(self, to_log: Dict[str, Any], key: str, value: Tensor):
         to_log.update(
             {
                 key + "_min": value.min().item(),
@@ -444,7 +483,7 @@ class JsonWriter:
         seed: int,
     ):
         self.path = Path(folder) / Path(name)
-        self.run_data = {"absolute_metrics": {}}
+        self.run_data: dict[str, Any] = {"absolute_metrics": {}}
         self.data = {
             environment_name: {
                 task_name: {algorithm_name: {f"seed_{seed}": self.run_data}}
@@ -463,9 +502,9 @@ class JsonWriter:
             evaluation_step (int): the evaluation step
 
         """
-        metrics = {k: val.tolist() for k, val in metrics.items()}
-        step_metrics = {"step_count": total_frames}
-        step_metrics.update(metrics)
+        metrics_list = {k: val.tolist() for k, val in metrics.items()}  # type: ignore[union-attr]
+        step_metrics: dict[str, Any] = {"step_count": total_frames}
+        step_metrics.update(metrics_list)  # type: ignore[arg-type]
         step_str = f"step_{evaluation_step}"
         if step_str in self.run_data:
             self.run_data[step_str].update(step_metrics)

@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of ISAC algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Optional, Tuple, Type, Union
+from typing import Any, Dict, Iterable, Optional, Tuple, Type, Union
 
 from tensordict import TensorDictBase
 from tensordict.nn import NormalParamExtractor, TensorDictModule, TensorDictSequential
@@ -247,6 +249,18 @@ class Isac(Algorithm):
         return policy_for_loss
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for ISAC training.
+
+        Ensures nested keys for done, terminated, and reward are properly set
+        at the group level by expanding environment-level values to match group shape.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with nested done, terminated, and reward keys.
+        """
         keys = list(batch.keys(True, True))
         group_shape = batch.get(group).shape
 
@@ -280,6 +294,17 @@ class Isac(Algorithm):
     #####################
 
     def get_discrete_value_module(self, group: str) -> TensorDictModule:
+        """Create the value module for discrete action spaces.
+
+        Builds a critic that estimates action values (Q-values) for each
+        discrete action available to the agents.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the discrete action-value critic network.
+        """
         n_agents = len(self.group_map[group])
         n_actions = self.action_spec[group, "action"].space.n
 
@@ -310,6 +335,17 @@ class Isac(Algorithm):
         return value_module
 
     def get_continuous_value_module(self, group: str) -> TensorDictModule:
+        """Create the value module for continuous action spaces.
+
+        Builds a critic that estimates state-action values (Q-values) for
+        continuous actions. The critic takes both observations and actions as input.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the continuous state-action value critic network.
+        """
         n_agents = len(self.group_map[group])
         modules = []
 
@@ -351,37 +387,62 @@ class Isac(Algorithm):
 class IsacConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Isac`."""
 
-    share_param_critic: bool = MISSING
+    share_param_critic: Any = MISSING
 
-    num_qvalue_nets: int = MISSING
-    loss_function: str = MISSING
-    delay_qvalue: bool = MISSING
-    target_entropy: Union[float, str] = MISSING
-    discrete_target_entropy_weight: float = MISSING
+    num_qvalue_nets: Any = MISSING
+    loss_function: Any = MISSING
+    delay_qvalue: Any = MISSING
+    target_entropy: Any = MISSING
+    discrete_target_entropy_weight: Any = MISSING
 
-    alpha_init: float = MISSING
-    min_alpha: Optional[float] = MISSING
-    max_alpha: Optional[float] = MISSING
-    fixed_alpha: bool = MISSING
-    scale_mapping: str = MISSING
-    use_tanh_normal: bool = MISSING
+    alpha_init: Any = MISSING
+    min_alpha: Any = MISSING
+    max_alpha: Any = MISSING
+    fixed_alpha: Any = MISSING
+    scale_mapping: Any = MISSING
+    use_tanh_normal: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Isac class.
+        """
         return Isac
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            True, as ISAC supports continuous actions.
+        """
         return True
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            True, as ISAC supports discrete actions.
+        """
         return True
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            False, as ISAC is an off-policy algorithm.
+        """
         return False
 
     @staticmethod
     def has_independent_critic() -> bool:
+        """Check if algorithm uses independent critics.
+
+        Returns:
+            True, as ISAC uses independent critics for each agent.
+        """
         return True

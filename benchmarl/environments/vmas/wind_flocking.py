@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Wind Flocking task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -32,17 +36,17 @@ class TaskConfig:
         desired_vel: Desired velocity magnitude for the flock.
     """
 
-    max_steps: int = MISSING
-    dist_shaping_factor: float = MISSING
-    rot_shaping_factor: float = MISSING
-    vel_shaping_factor: float = MISSING
-    pos_shaping_factor: float = MISSING
-    energy_shaping_factor: float = MISSING
-    wind_shaping_factor: float = MISSING
-    wind: float = MISSING
-    cover_angle_tolerance: float = MISSING
-    horizon: int = MISSING
-    observe_rel_pos: bool = MISSING
-    observe_rel_vel: bool = MISSING
-    observe_pos: bool = MISSING
-    desired_vel: float = MISSING
+    max_steps: Any = MISSING
+    dist_shaping_factor: Any = MISSING
+    rot_shaping_factor: Any = MISSING
+    vel_shaping_factor: Any = MISSING
+    pos_shaping_factor: Any = MISSING
+    energy_shaping_factor: Any = MISSING
+    wind_shaping_factor: Any = MISSING
+    wind: Any = MISSING
+    cover_angle_tolerance: Any = MISSING
+    horizon: Any = MISSING
+    observe_rel_pos: Any = MISSING
+    observe_rel_vel: Any = MISSING
+    observe_pos: Any = MISSING
+    desired_vel: Any = MISSING

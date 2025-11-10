@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of QMIX algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Tuple, Type
+from typing import Any, Dict, Iterable, Tuple, Type
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule, TensorDictSequential
@@ -147,6 +149,18 @@ class Qmix(Algorithm):
         return TensorDictSequential(*policy_for_loss, greedy)
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for QMIX training.
+
+        Aggregates group-level done, terminated, and reward values to environment level.
+        Done and terminated flags use any() aggregation, while rewards use mean().
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with aggregated environment-level keys.
+        """
         keys = list(batch.keys(True, True))
 
         done_key = ("next", "done")
@@ -177,6 +191,21 @@ class Qmix(Algorithm):
     #####################
 
     def get_mixer(self, group: str) -> TensorDictModule:
+        """Create the QMIX mixing network module.
+
+        Builds a mixer that combines per-agent Q-values into a joint Q-value
+        conditioned on global state or observations. The mixer enforces monotonicity
+        constraints for value factorization.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the QMIX mixing network.
+
+        Raises:
+            ValueError: If called without global state and multiple observation keys.
+        """
         n_agents = len(self.group_map[group])
 
         if self.state_spec is not None:
@@ -212,22 +241,42 @@ class Qmix(Algorithm):
 class QmixConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Qmix`."""
 
-    mixing_embed_dim: int = MISSING
-    delay_value: bool = MISSING
-    loss_function: str = MISSING
+    mixing_embed_dim: Any = MISSING
+    delay_value: Any = MISSING
+    loss_function: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Qmix class.
+        """
         return Qmix
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            False, as QMIX does not support continuous actions.
+        """
         return False
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            True, as QMIX supports discrete actions.
+        """
         return True
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            False, as QMIX is an off-policy algorithm.
+        """
         return False

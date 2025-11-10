@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Common base classes and utilities for multi-agent environment wrappers."""
+
 from __future__ import annotations
 
 import abc
@@ -12,7 +14,7 @@ import warnings
 from abc import abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from tensordict import TensorDictBase
 from torch import Tensor
@@ -67,7 +69,7 @@ class TaskClass(abc.ABC):
 
     """
 
-    def __init__(self, name: str, config: dict[str, Any]):
+    def __init__(self, name: str, config: Optional[dict[str, Any]]):
         self.name = name
         if config is None:
             config = {}
@@ -367,6 +369,11 @@ class Task(Enum):
         return self.associated_class()(name=self.name, config=config)
 
     def __new__(cls, *args, **kwargs):
+        """Perform   new   operation.
+
+        Returns:
+            Result of the operation.
+        """
         value = len(cls.__members__) + 1
         obj = object.__new__(cls)
         obj._value_ = value
@@ -403,88 +410,191 @@ class Task(Enum):
 
     @property
     def config(self):
+        """Return the task configuration.
+
+        Returns:
+            Task configuration instance.
+        """
         raise ValueError(
             "Task.config is deprecated, use Task.get_task().config instead"
         )
 
     def update_config(self, config: dict[str, Any]) -> Task:
+        """Perform update config operation.
+
+        Returns:
+            Result of the operation.
+        """
         raise ValueError(
             "Task.update_config is deprecated please use Task.get_task().config.update() instead"
         )
 
     def supports_continuous_actions(self) -> bool:
+        """Check if environment supports continuous actions.
+
+        Returns:
+            True if continuous actions are supported, False otherwise.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def supports_discrete_actions(self) -> bool:
+        """Check if environment supports discrete actions.
+
+        Returns:
+            True if discrete actions are supported, False otherwise.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def max_steps(self, env: EnvBase) -> int:
+        """Return the maximum number of steps per episode.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Maximum steps per episode, or None if unlimited.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def has_render(self, env: EnvBase) -> bool:
+        """Check if environment supports rendering.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            True if rendering is supported, False otherwise.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def group_map(self, env: EnvBase) -> dict[str, list[str]]:
+        """Return the mapping of agent groups.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Dictionary mapping group names to agent lists.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def observation_spec(self, env: EnvBase) -> Composite:
+        """Return the observation specification.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Observation specification for the environment.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def info_spec(self, env: EnvBase) -> Composite | None:
+        """Perform info spec operation.
+
+        Returns:
+            Result of the operation.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def state_spec(self, env: EnvBase) -> Composite | None:
+        """Return the state specification.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            State specification for the environment, or None if not applicable.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def action_spec(self, env: EnvBase) -> Composite:
+        """Return the action specification.
+
+        Args:
+            env: The environment instance.
+
+        Returns:
+            Action specification for the environment.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def action_mask_spec(self, env: EnvBase) -> Composite | None:
+        """Perform action mask spec operation.
+
+        Returns:
+            Result of the operation.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     @staticmethod
     def log_info(batch: TensorDictBase) -> dict[str, float]:
+        """Perform log info operation.
+
+        Returns:
+            Result of the operation.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def get_reward_sum_transform(self, env: EnvBase) -> Transform:
+        """Get reward sum transform.
+
+        Returns:
+            The requested reward sum transform.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def get_env_transforms(self, env: EnvBase) -> list[Transform]:
+        """Get env transforms.
+
+        Returns:
+            The requested env transforms.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     def get_replay_buffer_transforms(self, env: EnvBase, group: str) -> list[Transform]:
+        """Get replay buffer transforms.
+
+        Returns:
+            The requested replay buffer transforms.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )
 
     @staticmethod
     def render_callback(experiment, env: EnvBase, data: TensorDictBase):
+        """Perform render callback operation.
+
+        Returns:
+            Result of the operation.
+        """
         raise ValueError(
             "Called function is deprecated is deprecated, please use Task.get_task().function() instead"
         )

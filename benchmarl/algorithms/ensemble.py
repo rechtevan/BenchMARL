@@ -4,6 +4,7 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Ensemble algorithm wrapper for using different algorithms per agent group."""
 
 from dataclasses import dataclass
 from typing import Dict, Iterable, Optional, Tuple, Type
@@ -74,11 +75,29 @@ class EnsembleAlgorithm(Algorithm):
         )
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data using group-specific algorithm.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with transformations applied by the group's algorithm.
+        """
         return self.algorithms_map[group].process_batch(group, batch)
 
     def process_loss_vals(
         self, group: str, loss_vals: TensorDictBase
     ) -> TensorDictBase:
+        """Process loss values using group-specific algorithm.
+
+        Args:
+            group: Name of the agent group.
+            loss_vals: Loss values to process.
+
+        Returns:
+            Processed loss values.
+        """
         return self.algorithms_map[group].process_loss_vals(group, loss_vals)
 
 
@@ -150,6 +169,17 @@ class EnsembleAlgorithmConfig(AlgorithmConfig):
             )
 
     def get_algorithm(self, experiment) -> Algorithm:
+        """Create and return the ensemble algorithm instance.
+
+        Args:
+            experiment: The experiment containing environment and group information.
+
+        Returns:
+            Configured EnsembleAlgorithm instance with algorithms for each group.
+
+        Raises:
+            ValueError: If algorithm config group names don't match environment group names.
+        """
         if set(self.algorithm_configs_map.keys()) != set(experiment.group_map.keys()):
             raise ValueError(
                 f"EnsembleAlgorithm group names {self.algorithm_configs_map.keys()} do not match "
@@ -165,16 +195,39 @@ class EnsembleAlgorithmConfig(AlgorithmConfig):
 
     @classmethod
     def get_from_yaml(cls, path: Optional[str] = None):
+        """Load algorithm configuration from YAML file.
+
+        Args:
+            path: Path to YAML configuration file.
+
+        Raises:
+            NotImplementedError: This method is not implemented for EnsembleAlgorithm.
+        """
         raise NotImplementedError
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The EnsembleAlgorithm class.
+        """
         return EnsembleAlgorithm
 
     def on_policy(self) -> bool:
+        """Check if the ensemble algorithm is on-policy.
+
+        Returns:
+            True if all constituent algorithms are on-policy, False otherwise.
+        """
         return self._on_policy
 
     def supports_continuous_actions(self) -> bool:
+        """Check if all algorithms in the ensemble support continuous actions.
+
+        Returns:
+            True if all constituent algorithms support continuous actions, False otherwise.
+        """
         supports_continuous_actions = True
         for algorithm_config in self.algorithm_configs_map.values():
             supports_continuous_actions *= (
@@ -183,22 +236,42 @@ class EnsembleAlgorithmConfig(AlgorithmConfig):
         return supports_continuous_actions
 
     def supports_discrete_actions(self) -> bool:
+        """Check if all algorithms in the ensemble support discrete actions.
+
+        Returns:
+            True if all constituent algorithms support discrete actions, False otherwise.
+        """
         supports_discrete_actions = True
         for algorithm_config in self.algorithm_configs_map.values():
             supports_discrete_actions *= algorithm_config.supports_discrete_actions()
         return supports_discrete_actions
 
     def has_independent_critic(self) -> bool:
+        """Check if any algorithm in the ensemble has an independent critic.
+
+        Returns:
+            True if at least one constituent algorithm has an independent critic, False otherwise.
+        """
         has_independent_critic = False
         for algorithm_config in self.algorithm_configs_map.values():
             has_independent_critic += algorithm_config.has_independent_critic()
         return has_independent_critic
 
     def has_centralized_critic(self) -> bool:
+        """Check if any algorithm in the ensemble has a centralized critic.
+
+        Returns:
+            True if at least one constituent algorithm has a centralized critic, False otherwise.
+        """
         has_centralized_critic = False
         for algorithm_config in self.algorithm_configs_map.values():
             has_centralized_critic += algorithm_config.has_centralized_critic()
         return has_centralized_critic
 
     def has_critic(self) -> bool:
+        """Check if any algorithm in the ensemble has a critic.
+
+        Returns:
+            True if at least one algorithm has a centralized or independent critic, False otherwise.
+        """
         return self.has_centralized_critic() or self.has_independent_critic()

@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Football task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -55,58 +58,58 @@ class TaskConfig:
         dict_obs: Whether to use dictionary-based observations.
     """
 
-    max_steps: int = MISSING
+    max_steps: Any = MISSING
 
     # Agents config
-    n_blue_agents: int = MISSING
-    n_red_agents: int = MISSING
-    ai_red_agents: bool = MISSING
-    physically_different: bool = MISSING
+    n_blue_agents: Any = MISSING
+    n_red_agents: Any = MISSING
+    ai_red_agents: Any = MISSING
+    physically_different: Any = MISSING
 
     # Agent spawning
-    spawn_in_formation: bool = MISSING
-    formation_agents_per_column: int = MISSING
-    randomise_formation_indices: bool = MISSING
-    only_blue_formation: bool = MISSING
-    formation_noise: float = MISSING
+    spawn_in_formation: Any = MISSING
+    formation_agents_per_column: Any = MISSING
+    randomise_formation_indices: Any = MISSING
+    only_blue_formation: Any = MISSING
+    formation_noise: Any = MISSING
 
     # Opponent heuristic config
-    n_traj_points: int = MISSING
-    ai_strength: float = MISSING
-    ai_decision_strength: float = MISSING
-    ai_precision_strength: float = MISSING
+    n_traj_points: Any = MISSING
+    ai_strength: Any = MISSING
+    ai_decision_strength: Any = MISSING
+    ai_precision_strength: Any = MISSING
 
     # Task sizes
-    agent_size: float = MISSING
-    goal_size: float = MISSING
-    goal_depth: float = MISSING
-    pitch_length: float = MISSING
-    pitch_width: float = MISSING
-    ball_mass: float = MISSING
-    ball_size: float = MISSING
+    agent_size: Any = MISSING
+    goal_size: Any = MISSING
+    goal_depth: Any = MISSING
+    pitch_length: Any = MISSING
+    pitch_width: Any = MISSING
+    ball_mass: Any = MISSING
+    ball_size: Any = MISSING
 
     # Actions
-    u_multiplier: float = MISSING
+    u_multiplier: Any = MISSING
 
     # Actions shooting
-    enable_shooting: bool = MISSING
-    u_rot_multiplier: float = MISSING
-    u_shoot_multiplier: float = MISSING
-    shooting_radius: float = MISSING
-    shooting_angle: float = MISSING
+    enable_shooting: Any = MISSING
+    u_rot_multiplier: Any = MISSING
+    u_shoot_multiplier: Any = MISSING
+    shooting_radius: Any = MISSING
+    shooting_angle: Any = MISSING
 
     # Speeds
-    max_speed: float = MISSING
-    ball_max_speed: float = MISSING
+    max_speed: Any = MISSING
+    ball_max_speed: Any = MISSING
 
     # Rewards
-    dense_reward: bool = MISSING
-    pos_shaping_factor_ball_goal: float = MISSING
-    pos_shaping_factor_agent_ball: float = MISSING
-    distance_to_ball_trigger: float = MISSING
-    scoring_reward: float = MISSING
+    dense_reward: Any = MISSING
+    pos_shaping_factor_ball_goal: Any = MISSING
+    pos_shaping_factor_agent_ball: Any = MISSING
+    distance_to_ball_trigger: Any = MISSING
+    scoring_reward: Any = MISSING
 
     # Observations
-    observe_teammates: bool = MISSING
-    observe_adversaries: bool = MISSING
-    dict_obs: bool = MISSING
+    observe_teammates: Any = MISSING
+    observe_adversaries: Any = MISSING
+    dict_obs: Any = MISSING

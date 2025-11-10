@@ -101,6 +101,9 @@ module = [
     "moviepy.*",
     "wandb.*",
     "tqdm.*",
+    "tensordict.*",
+    "marl_eval.*",
+    "yaml",
 ]
 ignore_missing_imports = true
 

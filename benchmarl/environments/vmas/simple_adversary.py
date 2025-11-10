@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Simple Adversary task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -21,6 +25,6 @@ class TaskConfig:
         n_adversaries: Number of adversarial agents.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    n_adversaries: int = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    n_adversaries: Any = MISSING

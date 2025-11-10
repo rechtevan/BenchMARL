@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Simple Push task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -19,4 +23,4 @@ class TaskConfig:
         max_steps: Maximum number of environment steps per episode.
     """
 
-    max_steps: int = MISSING
+    max_steps: Any = MISSING

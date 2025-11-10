@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Buzz Wire task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -21,6 +24,6 @@ class TaskConfig:
         collision_reward: Reward/penalty for colliding with boundaries.
     """
 
-    max_steps: int = MISSING
-    random_start_angle: bool = MISSING
-    collision_reward: float = MISSING
+    max_steps: Any = MISSING
+    random_start_angle: Any = MISSING
+    collision_reward: Any = MISSING

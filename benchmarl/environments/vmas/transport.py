@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Transport task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -24,9 +28,9 @@ class TaskConfig:
         package_mass: Mass of each package.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    n_packages: int = MISSING
-    package_width: float = MISSING
-    package_length: float = MISSING
-    package_mass: float = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    n_packages: Any = MISSING
+    package_width: Any = MISSING
+    package_length: Any = MISSING
+    package_mass: Any = MISSING

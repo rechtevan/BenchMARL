@@ -4,10 +4,12 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""DeepSets model implementation for set-based multi-agent inputs."""
+
 from __future__ import annotations
 
 from dataclasses import MISSING, dataclass
-from typing import Sequence
+from typing import Any, Sequence
 
 import torch
 from tensordict import TensorDictBase
@@ -234,16 +236,22 @@ class Deepsets(Model):
         ):
             raise ValueError("DeepSets found no set inputs, maybe use an MLP?")
 
-        if len(self.set_in_keys_local) and input_shape_set_local[-2] != self.n_agents:
+        if (
+            len(self.set_in_keys_local)
+            and input_shape_set_local is not None
+            and input_shape_set_local[-2] != self.n_agents
+        ):
             raise ValueError()
         if (
             len(self.tensor_in_keys_local)
+            and input_shape_tensor_local is not None
             and input_shape_tensor_local[-1] != self.n_agents
         ):
             raise ValueError()
         if (
             len(self.set_in_keys_global)
             and self.input_has_agent_dim
+            and input_shape_set_global is not None
             and input_shape_set_global[-1] != self.n_agents
         ):
             raise ValueError()
@@ -353,21 +361,28 @@ class _DeepsetsNet(nn.Module):
             return torch.min(x, dim=dim)[0]
         elif aggr == "mul":
             return torch.prod(x, dim=dim)
+        else:
+            raise ValueError(f"Unknown aggregation method: {aggr}")
 
 
 @dataclass
 class DeepsetsConfig(ModelConfig):
     """Dataclass config for a :class:`~benchmarl.models.Deepsets`."""
 
-    aggr: str = MISSING
-    out_features_local_nn: int = MISSING
+    aggr: Any = MISSING
+    out_features_local_nn: Any = MISSING
 
-    local_nn_num_cells: Sequence[int] = MISSING
-    local_nn_activation_class: type[nn.Module] = MISSING
+    local_nn_num_cells: Any = MISSING
+    local_nn_activation_class: Any = MISSING
 
-    global_nn_num_cells: Sequence[int] = MISSING
-    global_nn_activation_class: type[nn.Module] = MISSING
+    global_nn_num_cells: Any = MISSING
+    global_nn_activation_class: Any = MISSING
 
     @staticmethod
     def associated_class():
+        """Perform associated class operation.
+
+        Returns:
+            Result of the operation.
+        """
         return Deepsets

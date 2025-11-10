@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Navigation task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -27,12 +31,12 @@ class TaskConfig:
         agent_radius: Physical radius of agents.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    collisions: bool = MISSING
-    agents_with_same_goal: int = MISSING
-    observe_all_goals: bool = MISSING
-    shared_rew: bool = MISSING
-    split_goals: bool = MISSING
-    lidar_range: float = MISSING
-    agent_radius: float = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    collisions: Any = MISSING
+    agents_with_same_goal: Any = MISSING
+    observe_all_goals: Any = MISSING
+    shared_rew: Any = MISSING
+    split_goals: Any = MISSING
+    lidar_range: Any = MISSING
+    agent_radius: Any = MISSING

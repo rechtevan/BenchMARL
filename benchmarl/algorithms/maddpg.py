@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of MADDPG algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Tuple, Type
+from typing import Any, Dict, Iterable, Tuple, Type
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule, TensorDictSequential
@@ -151,6 +153,18 @@ class Maddpg(Algorithm):
         return TensorDictSequential(*policy_for_loss, noise_module)
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for MADDPG training.
+
+        Ensures nested keys for done, terminated, and reward are properly set
+        at the group level by expanding environment-level values to match group shape.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with nested done, terminated, and reward keys.
+        """
         keys = list(batch.keys(True, True))
         group_shape = batch.get(group).shape
 
@@ -184,6 +198,18 @@ class Maddpg(Algorithm):
     #####################
 
     def get_value_module(self, group: str) -> TensorDictModule:
+        """Create the centralized value (critic) module for the agent group.
+
+        Builds a centralized critic that takes global state/observations and all
+        agents' actions as input to estimate state-action values. Supports both
+        shared and independent parameter configurations.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the centralized critic network.
+        """
         n_agents = len(self.group_map[group])
         modules = []
 
@@ -261,28 +287,53 @@ class Maddpg(Algorithm):
 class MaddpgConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Maddpg`."""
 
-    share_param_critic: bool = MISSING
+    share_param_critic: Any = MISSING
 
-    loss_function: str = MISSING
-    delay_value: bool = MISSING
-    use_tanh_mapping: bool = MISSING
+    loss_function: Any = MISSING
+    delay_value: Any = MISSING
+    use_tanh_mapping: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Maddpg class.
+        """
         return Maddpg
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            True, as MADDPG supports continuous actions.
+        """
         return True
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            False, as MADDPG does not support discrete actions.
+        """
         return False
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            False, as MADDPG is an off-policy algorithm.
+        """
         return False
 
     @staticmethod
     def has_centralized_critic() -> bool:
+        """Check if algorithm uses a centralized critic.
+
+        Returns:
+            True, as MADDPG uses a centralized critic.
+        """
         return True

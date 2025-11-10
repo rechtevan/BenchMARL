@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of IPPO algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Tuple, Type
+from typing import Any, Dict, Iterable, Tuple, Type
 
 import torch
 from tensordict import TensorDictBase
@@ -202,6 +204,19 @@ class Ippo(Algorithm):
         return policy_for_loss
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for IPPO training.
+
+        Ensures nested keys for done, terminated, and reward are properly set,
+        then computes advantage estimates for the batch. If minibatch_advantage
+        is enabled, processes the batch in minibatches.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with advantage estimates computed.
+        """
         keys = list(batch.keys(True, True))
         group_shape = batch.get(group).shape
 
@@ -257,6 +272,15 @@ class Ippo(Algorithm):
     def process_loss_vals(
         self, group: str, loss_vals: TensorDictBase
     ) -> TensorDictBase:
+        """Process loss values by combining policy and entropy losses.
+
+        Args:
+            group: Name of the agent group.
+            loss_vals: Loss values to process.
+
+        Returns:
+            Processed loss values with entropy loss merged into objective loss.
+        """
         loss_vals.set(
             "loss_objective", loss_vals["loss_objective"] + loss_vals["loss_entropy"]
         )
@@ -268,6 +292,17 @@ class Ippo(Algorithm):
     #####################
 
     def get_critic(self, group: str) -> TensorDictModule:
+        """Create the value critic module for the agent group.
+
+        Builds an independent critic that estimates state values for each agent
+        based on their observations.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the value critic network.
+        """
         n_agents = len(self.group_map[group])
 
         critic_input_spec = Composite(
@@ -300,32 +335,57 @@ class Ippo(Algorithm):
 class IppoConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Ippo`."""
 
-    share_param_critic: bool = MISSING
-    clip_epsilon: float = MISSING
-    entropy_coef: float = MISSING
-    critic_coef: float = MISSING
-    loss_critic_type: str = MISSING
-    lmbda: float = MISSING
-    scale_mapping: str = MISSING
-    use_tanh_normal: bool = MISSING
-    minibatch_advantage: bool = MISSING
+    share_param_critic: Any = MISSING
+    clip_epsilon: Any = MISSING
+    entropy_coef: Any = MISSING
+    critic_coef: Any = MISSING
+    loss_critic_type: Any = MISSING
+    lmbda: Any = MISSING
+    scale_mapping: Any = MISSING
+    use_tanh_normal: Any = MISSING
+    minibatch_advantage: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Ippo class.
+        """
         return Ippo
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            True, as IPPO supports continuous actions.
+        """
         return True
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            True, as IPPO supports discrete actions.
+        """
         return True
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            True, as IPPO is an on-policy algorithm.
+        """
         return True
 
     @staticmethod
     def has_independent_critic() -> bool:
+        """Check if algorithm uses independent critics.
+
+        Returns:
+            True, as IPPO uses independent critics for each agent.
+        """
         return True

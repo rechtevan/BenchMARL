@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""PettingZoo Simple Spread task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -22,7 +25,7 @@ class TaskConfig:
         N: Number of agents.
     """
 
-    task: str = MISSING
-    max_cycles: int = MISSING
-    local_ratio: float = MISSING
-    N: int = MISSING
+    task: Any = MISSING
+    max_cycles: Any = MISSING
+    local_ratio: Any = MISSING
+    N: Any = MISSING

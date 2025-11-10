@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""PettingZoo Simple Crypto task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -20,5 +23,5 @@ class TaskConfig:
         max_cycles: Maximum number of environment steps per episode.
     """
 
-    task: str = MISSING
-    max_cycles: int = MISSING
+    task: Any = MISSING
+    max_cycles: Any = MISSING

@@ -4,6 +4,8 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Benchmark class for running and comparing multiple MARL experiments."""
+
 from typing import Iterator, Optional, Sequence, Set, Union
 
 from benchmarl.algorithms.common import AlgorithmConfig

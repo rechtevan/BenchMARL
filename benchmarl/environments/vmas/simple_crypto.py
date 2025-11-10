@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Simple Crypto task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -20,5 +24,5 @@ class TaskConfig:
         dim_c: Dimensionality of the communication channel.
     """
 
-    max_steps: int = MISSING
-    dim_c: int = MISSING
+    max_steps: Any = MISSING
+    dim_c: Any = MISSING

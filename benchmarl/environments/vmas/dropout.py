@@ -4,7 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""VMAS Dropout task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -22,7 +25,7 @@ class TaskConfig:
         start_same_point: Whether all agents start at the same initial position.
     """
 
-    max_steps: int = MISSING
-    n_agents: int = MISSING
-    energy_coeff: float = MISSING
-    start_same_point: bool = MISSING
+    max_steps: Any = MISSING
+    n_agents: Any = MISSING
+    energy_coeff: Any = MISSING
+    start_same_point: Any = MISSING

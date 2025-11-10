@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of MAPPO algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Tuple, Type
+from typing import Any, Dict, Iterable, Tuple, Type
 
 import torch
 from tensordict import TensorDictBase
@@ -206,6 +208,19 @@ class Mappo(Algorithm):
         return policy_for_loss
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for MAPPO training.
+
+        Ensures nested keys for done, terminated, and reward are properly set,
+        then computes advantage estimates for the batch. If minibatch_advantage
+        is enabled, processes the batch in minibatches.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with advantage estimates computed.
+        """
         keys = list(batch.keys(True, True))
         group_shape = batch.get(group).shape
 
@@ -261,6 +276,15 @@ class Mappo(Algorithm):
     def process_loss_vals(
         self, group: str, loss_vals: TensorDictBase
     ) -> TensorDictBase:
+        """Process loss values by combining policy and entropy losses.
+
+        Args:
+            group: Name of the agent group.
+            loss_vals: Loss values to process.
+
+        Returns:
+            Processed loss values with entropy loss merged into objective loss.
+        """
         loss_vals.set(
             "loss_objective", loss_vals["loss_objective"] + loss_vals["loss_entropy"]
         )
@@ -272,6 +296,18 @@ class Mappo(Algorithm):
     #####################
 
     def get_critic(self, group: str) -> TensorDictModule:
+        """Create the centralized value critic module for the agent group.
+
+        Builds a centralized critic that estimates state values using global
+        state or aggregated observations. Supports both shared and independent
+        parameter configurations.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the centralized value critic network.
+        """
         n_agents = len(self.group_map[group])
         if self.share_param_critic:
             critic_output_spec = Composite({"state_value": Unbounded(shape=(1,))})
@@ -323,32 +359,57 @@ class Mappo(Algorithm):
 class MappoConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Mappo`."""
 
-    share_param_critic: bool = MISSING
-    clip_epsilon: float = MISSING
-    entropy_coef: float = MISSING
-    critic_coef: float = MISSING
-    loss_critic_type: str = MISSING
-    lmbda: float = MISSING
-    scale_mapping: str = MISSING
-    use_tanh_normal: bool = MISSING
-    minibatch_advantage: bool = MISSING
+    share_param_critic: Any = MISSING
+    clip_epsilon: Any = MISSING
+    entropy_coef: Any = MISSING
+    critic_coef: Any = MISSING
+    loss_critic_type: Any = MISSING
+    lmbda: Any = MISSING
+    scale_mapping: Any = MISSING
+    use_tanh_normal: Any = MISSING
+    minibatch_advantage: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Mappo class.
+        """
         return Mappo
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            True, as MAPPO supports continuous actions.
+        """
         return True
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            True, as MAPPO supports discrete actions.
+        """
         return True
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            True, as MAPPO is an on-policy algorithm.
+        """
         return True
 
     @staticmethod
     def has_centralized_critic() -> bool:
+        """Check if algorithm uses a centralized critic.
+
+        Returns:
+            True, as MAPPO uses a centralized critic.
+        """
         return True

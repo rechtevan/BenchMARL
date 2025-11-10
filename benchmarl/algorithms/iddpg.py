@@ -4,8 +4,10 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Implementation of IDDPG algorithm for multi-agent reinforcement learning."""
+
 from dataclasses import MISSING, dataclass
-from typing import Dict, Iterable, Tuple, Type
+from typing import Any, Dict, Iterable, Tuple, Type
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule, TensorDictSequential
@@ -151,6 +153,18 @@ class Iddpg(Algorithm):
         return TensorDictSequential(*policy_for_loss, noise_module)
 
     def process_batch(self, group: str, batch: TensorDictBase) -> TensorDictBase:
+        """Process and transform batch data for IDDPG training.
+
+        Ensures nested keys for done, terminated, and reward are properly set
+        at the group level by expanding environment-level values to match group shape.
+
+        Args:
+            group: Name of the agent group.
+            batch: Input batch to process.
+
+        Returns:
+            Processed batch with nested done, terminated, and reward keys.
+        """
         keys = list(batch.keys(True, True))
         group_shape = batch.get(group).shape
 
@@ -184,6 +198,17 @@ class Iddpg(Algorithm):
     #####################
 
     def get_value_module(self, group: str) -> TensorDictModule:
+        """Create the value (critic) module for the agent group.
+
+        Builds an independent critic that estimates state-action values for each agent.
+        The critic takes both observations and actions as input.
+
+        Args:
+            group: Name of the agent group.
+
+        Returns:
+            TensorDictModule containing the critic network.
+        """
         n_agents = len(self.group_map[group])
         modules = []
 
@@ -224,27 +249,52 @@ class Iddpg(Algorithm):
 class IddpgConfig(AlgorithmConfig):
     """Configuration dataclass for :class:`~benchmarl.algorithms.Iddpg`."""
 
-    share_param_critic: bool = MISSING
-    loss_function: str = MISSING
-    delay_value: bool = MISSING
-    use_tanh_mapping: bool = MISSING
+    share_param_critic: Any = MISSING
+    loss_function: Any = MISSING
+    delay_value: Any = MISSING
+    use_tanh_mapping: Any = MISSING
 
     @staticmethod
     def associated_class() -> Type[Algorithm]:
+        """Return the algorithm class associated with this config.
+
+        Returns:
+            The Iddpg class.
+        """
         return Iddpg
 
     @staticmethod
     def supports_continuous_actions() -> bool:
+        """Check if algorithm supports continuous action spaces.
+
+        Returns:
+            True, as IDDPG supports continuous actions.
+        """
         return True
 
     @staticmethod
     def supports_discrete_actions() -> bool:
+        """Check if algorithm supports discrete action spaces.
+
+        Returns:
+            False, as IDDPG does not support discrete actions.
+        """
         return False
 
     @staticmethod
     def on_policy() -> bool:
+        """Check if algorithm is on-policy.
+
+        Returns:
+            False, as IDDPG is an off-policy algorithm.
+        """
         return False
 
     @staticmethod
     def has_independent_critic() -> bool:
+        """Check if algorithm uses independent critics.
+
+        Returns:
+            True, as IDDPG uses independent critics for each agent.
+        """
         return True

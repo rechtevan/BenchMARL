@@ -4,7 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+
+"""VMAS Simple Tag task configuration."""
+
 from dataclasses import MISSING, dataclass
+from typing import Any
 
 
 @dataclass
@@ -31,16 +35,16 @@ class TaskConfig:
         respawn_at_catch: Whether prey respawn when caught.
     """
 
-    max_steps: int = MISSING
-    num_good_agents: int = MISSING
-    num_adversaries: int = MISSING
-    num_landmarks: int = MISSING
-    shape_agent_rew: bool = MISSING
-    shape_adversary_rew: bool = MISSING
-    agents_share_rew: bool = MISSING
-    adversaries_share_rew: bool = MISSING
-    observe_same_team: bool = MISSING
-    observe_pos: bool = MISSING
-    observe_vel: bool = MISSING
-    bound: float = MISSING
-    respawn_at_catch: bool = MISSING
+    max_steps: Any = MISSING
+    num_good_agents: Any = MISSING
+    num_adversaries: Any = MISSING
+    num_landmarks: Any = MISSING
+    shape_agent_rew: Any = MISSING
+    shape_adversary_rew: Any = MISSING
+    agents_share_rew: Any = MISSING
+    adversaries_share_rew: Any = MISSING
+    observe_same_team: Any = MISSING
+    observe_pos: Any = MISSING
+    observe_vel: Any = MISSING
+    bound: Any = MISSING
+    respawn_at_catch: Any = MISSING
