@@ -54,7 +54,7 @@ class Benchmark:
         return len(self.algorithm_configs) * len(self.tasks) * len(self.seeds)
 
     def get_experiments(self) -> Iterator[Experiment]:
-        """Yields one experiment at a time"""
+        """Yields one experiment at a time."""
         for algorithm_config in self.algorithm_configs:
             for task in self.tasks:
                 for seed in self.seeds:

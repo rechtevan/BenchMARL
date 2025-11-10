@@ -34,6 +34,7 @@ from benchmarl.utils import DEVICE_TYPING, _read_yaml_config
 
 class Algorithm(ABC):
     """Abstract class for an algorithm.
+
     This should be overridden by implemented algorithms
     and all abstract methods should be implemented.
 
@@ -107,6 +108,7 @@ class Algorithm(ABC):
 
     def get_loss_and_updater(self, group: str) -> Tuple[LossModule, TargetNetUpdater]:
         """Get the LossModule and TargetNetUpdater for a specific group.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_loss()` which needs to be implemented.
         The function will cache the output at the first call and return the cached values in future calls.
 
@@ -142,6 +144,7 @@ class Algorithm(ABC):
         self, group: str, transforms: List[Transform] = None
     ) -> ReplayBuffer:
         """Get the ReplayBuffer for a specific group.
+
         This function will check ``self.on_policy`` and create the buffer accordingly
 
         Args:
@@ -195,6 +198,7 @@ class Algorithm(ABC):
 
     def get_policy_for_loss(self, group: str) -> TensorDictModule:
         """Get the non-explorative policy for a specific group loss.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_policy_for_loss()` which needs to be implemented.
         The function will cache the output at the first call and return the cached values in future calls.
 
@@ -219,6 +223,7 @@ class Algorithm(ABC):
 
     def get_policy_for_collection(self) -> TensorDictSequential:
         """Get the explorative policy for all groups together.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_policy_for_collection()` which needs to be implemented.
         The function will cache the output at the first call and return the cached values in future calls.
 
@@ -241,6 +246,7 @@ class Algorithm(ABC):
 
     def get_parameters(self, group: str) -> Dict[str, Iterable]:
         """Get the dictionary mapping loss names to the relative parameters to optimize for a given group.
+
         This function calls the abstract :class:`~benchmarl.algorithms.Algorithm._get_parameters()` which needs to be implemented.
 
         Returns: a dictionary mapping loss names to a parameters' list
@@ -254,7 +260,7 @@ class Algorithm(ABC):
         self,
         env_fun: Callable[[], EnvBase],
     ) -> Callable[[], EnvBase]:
-        """This function can be used to wrap env_fun
+        """This function can be used to wrap env_fun.
 
         Args:
             env_fun (callable): a function that takes no args and creates an enviornment
@@ -337,7 +343,8 @@ class Algorithm(ABC):
     def process_loss_vals(
         self, group: str, loss_vals: TensorDictBase
     ) -> TensorDictBase:
-        """Here you can modify the loss_vals tensordict containing entries loss_name->loss_value
+        """Here you can modify the loss_vals tensordict containing entries loss_name->loss_value.
+
         For example, you can sum two entries in a new entry, to optimize them together.
 
         Args:
@@ -352,6 +359,7 @@ class Algorithm(ABC):
 @dataclass
 class AlgorithmConfig:
     """Dataclass representing an algorithm configuration.
+
     This should be overridden by implemented algorithms.
     Implementors should:
 
@@ -361,7 +369,7 @@ class AlgorithmConfig:
     """
 
     def get_algorithm(self, experiment) -> Algorithm:
-        """Main function to turn the config into the associated algorithm
+        """Main function to turn the config into the associated algorithm.
 
         Args:
             experiment (Experiment): the experiment class
@@ -386,7 +394,7 @@ class AlgorithmConfig:
 
     @classmethod
     def get_from_yaml(cls, path: Optional[str] = None):
-        """Load the algorithm configuration from yaml
+        """Load the algorithm configuration from yaml.
 
         Args:
             path (str, optional): The full path of the yaml file to load from.
@@ -407,39 +415,39 @@ class AlgorithmConfig:
     @staticmethod
     @abstractmethod
     def associated_class() -> Type[Algorithm]:
-        """The algorithm class associated to the config"""
+        """The algorithm class associated to the config."""
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
     def on_policy() -> bool:
-        """If the algorithm has to be run on policy or off policy"""
+        """If the algorithm has to be run on policy or off policy."""
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
     def supports_continuous_actions() -> bool:
-        """If the algorithm supports continuous actions"""
+        """If the algorithm supports continuous actions."""
         raise NotImplementedError
 
     @staticmethod
     @abstractmethod
     def supports_discrete_actions() -> bool:
-        """If the algorithm supports discrete actions"""
+        """If the algorithm supports discrete actions."""
         raise NotImplementedError
 
     @staticmethod
     def has_independent_critic() -> bool:
-        """If the algorithm uses an independent critic"""
+        """If the algorithm uses an independent critic."""
         return False
 
     @staticmethod
     def has_centralized_critic() -> bool:
-        """If the algorithm uses a centralized critic"""
+        """If the algorithm uses a centralized critic."""
         return False
 
     def has_critic(self) -> bool:
-        """If the algorithm uses a critic"""
+        """If the algorithm uses a critic."""
         if self.has_centralized_critic() and self.has_independent_critic():
             raise ValueError(
                 "Algorithm can either have a centralized critic or an indpendent one"

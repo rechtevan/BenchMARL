@@ -26,7 +26,7 @@ if _has_torch_geometric:
     from torch_geometric.transforms import BaseTransform
 
     class _RelVel(BaseTransform):
-        """Transform that reads graph.vel and writes node1.vel - node2.vel in the edge attributes"""
+        """Transform that reads graph.vel and writes node1.vel - node2.vel in the edge attributes."""
 
         def __init__(self):
             pass

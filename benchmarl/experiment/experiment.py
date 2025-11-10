@@ -51,6 +51,7 @@ if _has_hydra:
 @dataclass
 class ExperimentConfig:
     """Configuration class for experiments.
+
     This class acts as a schema for loading and validating yaml configurations.
 
     Parameters in this class aim to be agnostic of the algorithm, task or model used.
@@ -120,7 +121,7 @@ class ExperimentConfig:
     exclude_buffer_from_checkpoint: bool = MISSING
 
     def train_batch_size(self, on_policy: bool) -> int:
-        """The batch size of tensors used for training
+        """The batch size of tensors used for training.
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -134,8 +135,9 @@ class ExperimentConfig:
 
     def train_minibatch_size(self, on_policy: bool) -> int:
         """The minibatch size of tensors used for training.
+
         On-policy algorithms are trained by splitting the train_batch_size (equal to the collected frames) into minibatches.
-        Off-policy algorithms do not go through this process and thus have the ``train_minibatch_size==train_batch_size``
+        Off-policy algorithms do not go through this process and thus have the ``train_minibatch_size==train_batch_size``.
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -160,7 +162,7 @@ class ExperimentConfig:
         )
 
     def replay_buffer_memory_size(self, on_policy: bool) -> int:
-        """Size of the replay buffer memory in terms of frames
+        """Size of the replay buffer memory in terms of frames.
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -186,7 +188,7 @@ class ExperimentConfig:
         )
 
     def n_envs_per_worker(self, on_policy: bool) -> int:
-        """Number of environments used for collection
+        """Number of environments used for collection.
 
         - In vectorized environments, this will be the vectorized batch_size.
         - In other environments, this will be emulated by running them sequentially.
@@ -231,6 +233,7 @@ class ExperimentConfig:
 
     def get_exploration_anneal_frames(self, on_policy: bool):
         """Get the number of frames for exploration annealing.
+
         If self.exploration_anneal_frames is None this will be a third of the total frames to collect.
 
         Args:
@@ -244,7 +247,7 @@ class ExperimentConfig:
 
     @staticmethod
     def get_from_yaml(path: str | None = None):
-        """Load the experiment configuration from yaml
+        """Load the experiment configuration from yaml.
 
         Args:
             path (str, optional): The full path of the yaml file to load from.
@@ -982,7 +985,7 @@ class Experiment(CallbackNotifier):
         self.mean_return = state_dict["state"]["mean_return"]
 
     def _save_experiment(self) -> None:
-        """Checkpoint trainer"""
+        """Checkpoint trainer."""
         if self.config.keep_checkpoints_num is not None:
             while len(self._checkpointed_files) >= self.config.keep_checkpoints_num:
                 file_to_delete = self._checkpointed_files.popleft()
@@ -995,7 +998,7 @@ class Experiment(CallbackNotifier):
         self._checkpointed_files.append(checkpoint_file)
 
     def _load_experiment(self) -> Experiment:
-        """Load trainer from checkpoint"""
+        """Load trainer from checkpoint."""
         loaded_dict: OrderedDict = torch.load(
             self.config.restore_file, map_location=self.config.restore_map_location
         )

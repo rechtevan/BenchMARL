@@ -9,6 +9,18 @@ from dataclasses import MISSING, dataclass
 
 @dataclass
 class TaskConfig:
+    """Configuration for the VMAS Buzz Wire task.
+
+    A cooperative task inspired by the buzz wire game where agents must navigate
+    through a path without touching boundaries. Tests precise coordination and
+    collision avoidance under tight constraints.
+
+    Attributes:
+        max_steps: Maximum number of environment steps per episode.
+        random_start_angle: Whether to randomize the initial agent angles.
+        collision_reward: Reward/penalty for colliding with boundaries.
+    """
+
     max_steps: int = MISSING
     random_start_angle: bool = MISSING
     collision_reward: float = MISSING

@@ -318,7 +318,7 @@ class Deepsets(Model):
 
 
 class _DeepsetsNet(nn.Module):
-    """https://arxiv.org/abs/1703.06114"""
+    """https://arxiv.org/abs/1703.06114."""
 
     def __init__(
         self,

@@ -24,6 +24,38 @@ from benchmarl.environments import Task
 
 
 class Logger:
+    """Multi-backend experiment logger for BenchMARL training runs.
+
+    Manages logging to multiple backends including TensorBoard, WandB, and JSON files.
+    Handles collection metrics, training metrics, evaluation results, and video recordings.
+    Configured through :class:`~benchmarl.experiment.ExperimentConfig`.
+
+    Args:
+        experiment_name: Unique name for this experiment run.
+        folder_name: Directory path for storing logs and outputs.
+        experiment_config: Experiment configuration containing logger settings.
+        algorithm_name: Name of the algorithm being used.
+        environment_name: Name of the environment library (e.g., "vmas", "pettingzoo").
+        task_name: Specific task within the environment.
+        model_name: Neural network architecture name.
+        group_map: Mapping of agent group names to agent identifiers.
+        seed: Random seed for reproducibility.
+        project_name: Project name for WandB logging (if enabled).
+        wandb_extra_kwargs: Additional keyword arguments for WandB initialization.
+
+    Attributes:
+        experiment_config: Experiment configuration.
+        algorithm_name: Algorithm name.
+        environment_name: Environment library name.
+        task_name: Task name.
+        model_name: Model architecture name.
+        group_map: Agent group mapping.
+        seed: Random seed.
+        json_writer: JSON file writer (if enabled).
+        video_logger: Video recording logger (if enabled).
+        loggers: List of active logger backends (TensorBoard, WandB).
+    """
+
     def __init__(
         self,
         experiment_name: str,
@@ -388,7 +420,7 @@ class Logger:
 
 
 class JsonWriter:
-    """Writer to create json files for reporting according to marl-eval
+    """Writer to create json files for reporting according to marl-eval.
 
     Follows conventions from https://github.com/instadeepai/marl-eval/tree/main#usage-
 
@@ -422,7 +454,7 @@ class JsonWriter:
     def write(
         self, total_frames: int, metrics: Dict[str, List[Tensor]], evaluation_step: int
     ):
-        """Writes a step into the json reporting file
+        """Writes a step into the json reporting file.
 
         Args:
             total_frames (int): total frames collected so far in the experiment

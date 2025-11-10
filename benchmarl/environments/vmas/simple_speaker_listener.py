@@ -9,4 +9,14 @@ from dataclasses import MISSING, dataclass
 
 @dataclass
 class TaskConfig:
+    """Configuration for the VMAS Simple Speaker Listener task.
+
+    A communication task where a speaker observes the goal and communicates to a listener
+    which landmark to reach. The speaker cannot move and the listener cannot observe the goal.
+    Tests asymmetric communication. VMAS implementation of the MPE Simple Speaker Listener.
+
+    Attributes:
+        max_steps: Maximum number of environment steps per episode.
+    """
+
     max_steps: int = MISSING

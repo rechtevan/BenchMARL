@@ -23,8 +23,8 @@ interfaces for benchmarking different MARL algorithms and environments with repr
 
 ## Fork & Contribution Context
 
-This is a fork by rechtevan (Evan Recht) focused on code quality improvements. Changes developed in this fork will be
-submitted as pull requests to the upstream repository.
+This is a fork by rechtevan (Evan Montgomery-Recht) focused on code quality improvements. Changes developed in this fork
+will be submitted as pull requests to the upstream repository.
 
 **Repository information:**
 
@@ -39,6 +39,33 @@ submitted as pull requests to the upstream repository.
 2. Submit PRs to upstream facebookresearch/BenchMARL
 3. Maintain attribution via git history (no per-file copyright headers needed)
 4. Follow upstream contribution guidelines and code review process
+
+**GitHub CLI configuration (IMPORTANT):**
+
+When working with a fork, always set the default repository to your fork to prevent accidentally creating issues/PRs in
+upstream:
+
+```bash
+# Set default repo to your fork
+gh repo set-default rechtevan/BenchMARL
+
+# Verify the default
+gh repo view --json nameWithOwner
+# Should show: {"nameWithOwner":"rechtevan/BenchMARL"}
+```
+
+If you need to interact with upstream, explicitly specify the repo:
+
+```bash
+# Create issue in upstream (when needed)
+gh issue create --repo facebookresearch/BenchMARL
+
+# View upstream issues
+gh issue list --repo facebookresearch/BenchMARL
+```
+
+**Note:** This prevents accidentally creating issues in the upstream repository when you intend to create them in your
+fork.
 
 ## Code Quality Infrastructure
 

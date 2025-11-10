@@ -101,14 +101,16 @@ class TaskClass(abc.ABC):
     @abstractmethod
     def supports_continuous_actions(self) -> bool:
         """Return true if your task supports continuous actions.
-        If true, self.get_env_fun might be called with continuous_actions=True
+
+        If true, self.get_env_fun might be called with continuous_actions=True.
         """
         raise NotImplementedError
 
     @abstractmethod
     def supports_discrete_actions(self) -> bool:
         """Return true if your task supports discrete actions.
-        If true, self.get_env_fun might be called with continuous_actions=False
+
+        If true, self.get_env_fun might be called with continuous_actions=False.
         """
         raise NotImplementedError
 
@@ -124,7 +126,7 @@ class TaskClass(abc.ABC):
 
     @abstractmethod
     def has_render(self, env: EnvBase) -> bool:
-        """If env.render() should be called on the environment
+        """If env.render() should be called on the environment.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -135,6 +137,7 @@ class TaskClass(abc.ABC):
     @abstractmethod
     def group_map(self, env: EnvBase) -> dict[str, list[str]]:
         """The group_map mapping agents groups to agent names.
+
         This should be reelected in the TensorDicts coming from the environment where
         agent data is supposed to be stacked according to this.
 
@@ -147,6 +150,7 @@ class TaskClass(abc.ABC):
     @abstractmethod
     def observation_spec(self, env: EnvBase) -> Composite:
         """A spec for the observation.
+
         Must be a Composite with as many entries as needed nested under the ``group_name`` key.
 
         Args:
@@ -179,6 +183,7 @@ class TaskClass(abc.ABC):
     @abstractmethod
     def info_spec(self, env: EnvBase) -> Composite | None:
         """A spec for the info.
+
         If provided, must be a Composite with one (group_name, "info") entry per group (this entry can be composite).
 
 
@@ -191,6 +196,7 @@ class TaskClass(abc.ABC):
     @abstractmethod
     def state_spec(self, env: EnvBase) -> Composite | None:
         """A spec for the state.
+
         If provided, must be a Composite with one entry.
 
         Args:
@@ -202,6 +208,7 @@ class TaskClass(abc.ABC):
     @abstractmethod
     def action_spec(self, env: EnvBase) -> Composite:
         """A spec for the action.
+
         If provided, must be a Composite with one (group_name, "action") entry per group.
 
         Args:
@@ -213,6 +220,7 @@ class TaskClass(abc.ABC):
     @abstractmethod
     def action_mask_spec(self, env: EnvBase) -> Composite | None:
         """A spec for the action mask.
+
         If provided, must be a Composite with one (group_name, "action_mask") entry per group.
 
         Args:
@@ -224,12 +232,13 @@ class TaskClass(abc.ABC):
     @staticmethod
     @abstractmethod
     def env_name() -> str:
-        """The name of the environment in the ``benchmarl/conf/task`` folder"""
+        """The name of the environment in the ``benchmarl/conf/task`` folder."""
         raise NotImplementedError
 
     @staticmethod
     def log_info(batch: TensorDictBase) -> dict[str, float]:
         """Return a str->float dict with extra items to log.
+
         This function has access to the collected batch and is optional.
 
         Args:
@@ -239,7 +248,7 @@ class TaskClass(abc.ABC):
         return {}
 
     def get_reward_sum_transform(self, env: EnvBase) -> Transform:
-        """Returns the RewardSum transform for the environment
+        """Returns the RewardSum transform for the environment.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -261,8 +270,9 @@ class TaskClass(abc.ABC):
         return []
 
     def get_replay_buffer_transforms(self, env: EnvBase, group: str) -> list[Transform]:
-        """Returns a list of :class:`torchrl.envs.Transform` to be applied to the :class:`torchrl.data.ReplayBuffer`
-        of the specified group.
+        """Returns a list of :class:`torchrl.envs.Transform` to be applied to the :class:`torchrl.data.ReplayBuffer`.
+
+        Of the specified group.
 
         Args:
             env (EnvBase): An environment created via self.get_env_fun
@@ -331,12 +341,12 @@ class Task(Enum):
 
     @staticmethod
     def associated_class() -> type[TaskClass]:
-        """The associated task class"""
+        """The associated task class."""
         raise NotImplementedError
 
     @classmethod
     def env_name(cls) -> str:
-        """The name of the environment in the ``benchmarl/conf/task`` folder"""
+        """The name of the environment in the ``benchmarl/conf/task`` folder."""
         return cls.associated_class().env_name()
 
     def get_task(self, config: dict[str, Any] | None = None) -> TaskClass:
@@ -368,7 +378,7 @@ class Task(Enum):
         return _read_yaml_config(str(yaml_path.resolve()))
 
     def get_from_yaml(self, path: str | None = None) -> TaskClass:
-        """Load the task configuration from yaml
+        """Load the task configuration from yaml.
 
         Args:
             path (str, optional): The full path of the yaml file to load from. If None, it will default to

@@ -134,7 +134,7 @@ class Plotting:
         raw_data: Dict,
         metrics_to_normalize: Optional[List[str]] = METRICS_TO_NORMALIZE,
     ) -> Dict:
-        """Call ``data_process_pipeline`` to normalize the chosen metrics and to clean the data
+        """Call ``data_process_pipeline`` to normalize the chosen metrics and to clean the data.
 
         Args:
             raw_data (dict): the input data

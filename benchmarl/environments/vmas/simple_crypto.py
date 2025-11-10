@@ -9,5 +9,16 @@ from dataclasses import MISSING, dataclass
 
 @dataclass
 class TaskConfig:
+    """Configuration for the VMAS Simple Crypto task.
+
+    A communication task where agents must learn to encrypt and decrypt messages to
+    coordinate reaching the correct landmark. Tests emergent communication and
+    cryptographic-like coordination. VMAS implementation of the MPE Simple Crypto environment.
+
+    Attributes:
+        max_steps: Maximum number of environment steps per episode.
+        dim_c: Dimensionality of the communication channel.
+    """
+
     max_steps: int = MISSING
     dim_c: int = MISSING

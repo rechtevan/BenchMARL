@@ -39,6 +39,7 @@ def load_experiment_from_hydra(
     Args:
         cfg (DictConfig): the config dictionary from hydra main
         task_name (str): the name of the task to load
+        callbacks: callbacks to pass to the experiment
 
     Returns:
         :class:`~benchmarl.experiment.Experiment`

@@ -24,6 +24,19 @@ def _check_spec(tensordict, spec):
 
 
 def parse_model_config(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """Parse model configuration dictionary and resolve class names.
+
+    Removes the "name" key from the configuration and converts string class
+    references (keys ending with "class") to actual class objects using
+    dynamic import resolution.
+
+    Args:
+        cfg (Dict[str, Any]): Model configuration dictionary with potential
+            class name strings to resolve.
+
+    Returns:
+        Dict[str, Any]: Processed configuration dictionary with resolved classes.
+    """
     del cfg["name"]
     kwargs = {}
     for key, value in cfg.items():
@@ -35,9 +48,10 @@ def parse_model_config(cfg: Dict[str, Any]) -> Dict[str, Any]:
 
 def output_has_agent_dim(share_params: bool, centralised: bool) -> bool:
     """This is a dynamically computed attribute that indicates if the output will have the agent dimension.
+
     This will be false when share_params==True and centralised==True, and true in all other cases.
     When output_has_agent_dim is true, your model's output should contain the multiagent dimension,
-    and the dimension should be absent otherwise
+    and the dimension should be absent otherwise.
 
     """
     if share_params and centralised:
@@ -115,9 +129,10 @@ class Model(TensorDictModuleBase, ABC):
     @property
     def output_has_agent_dim(self) -> bool:
         """This is a dynamically computed attribute that indicates if the output will have the agent dimension.
+
         This will be false when ``share_params==True and centralised==True``, and true in all other cases.
         When output_has_agent_dim is true, your model's output should contain the multi-agent dimension,
-        and the dimension should be absent otherwise
+        and the dimension should be absent otherwise.
         """
         return output_has_agent_dim(self.share_params, self.centralised)
 
@@ -190,6 +205,7 @@ class Model(TensorDictModuleBase, ABC):
     @abstractmethod
     def _forward(self, tensordict: TensorDictBase) -> TensorDictBase:
         """Method to implement for the forward pass of the model.
+
         It should read self.in_keys, process it and write self.out_key.
 
         Args:
@@ -202,7 +218,7 @@ class Model(TensorDictModuleBase, ABC):
 
 
 class SequenceModel(Model):
-    """A sequence of :class:`~benchmarl.models.Model`
+    """A sequence of :class:`~benchmarl.models.Model`.
 
     Args:
        models (list of Model): the models in the sequence
@@ -236,6 +252,7 @@ class SequenceModel(Model):
 @dataclass
 class ModelConfig(ABC):
     """Dataclass representing a :class:`~benchmarl.models.Model` configuration.
+
     This should be overridden by implemented models.
     Implementors should:
 
@@ -301,24 +318,24 @@ class ModelConfig(ABC):
     @staticmethod
     @abstractmethod
     def associated_class():
-        """The associated Model class"""
+        """The associated Model class."""
         raise NotImplementedError
 
     @property
     def is_rnn(self) -> bool:
-        """Whether the model is an RNN"""
+        """Whether the model is an RNN."""
         return False
 
     @property
     def is_critic(self):
-        """Whether the model is a critic"""
+        """Whether the model is a critic."""
         if not hasattr(self, "_is_critic"):
             self._is_critic = False
         return self._is_critic
 
     @is_critic.setter
     def is_critic(self, value):
-        """Set whether the model is a critic"""
+        """Set whether the model is a critic."""
         self._is_critic = value
 
     def get_model_state_spec(self, model_index: int = 0) -> Composite:
@@ -354,7 +371,7 @@ class ModelConfig(ABC):
 
     @classmethod
     def get_from_yaml(cls, path: Optional[str] = None):
-        """Load the model configuration from yaml
+        """Load the model configuration from yaml.
 
         Args:
             path (str, optional): The full path of the yaml file to load from.
@@ -523,6 +540,24 @@ class SequenceModelConfig(ModelConfig):
 
 @dataclass
 class EnsembleModelConfig(ModelConfig):
+    """Configuration for ensemble models with different architectures per agent group.
+
+    This config allows using different model architectures for different agent groups
+    in heterogeneous multi-agent environments. Each agent group is mapped to its own
+    ModelConfig, enabling specialized neural network architectures tailored to each
+    group's observation and action spaces.
+
+    Typical use cases:
+        - Heterogeneous multi-agent systems where different agent types require
+          specialized architectures (e.g., flying vs. ground agents)
+        - Experiments comparing different model architectures across agent groups
+        - Environments with asymmetric agent capabilities
+
+    Attributes:
+        model_configs_map: Dictionary mapping agent group names to their respective
+            ModelConfig instances.
+    """
+
     model_configs_map: Dict[str, ModelConfig]
 
     def get_model(self, agent_group: str, **kwargs) -> Model:

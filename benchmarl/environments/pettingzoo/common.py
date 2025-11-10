@@ -15,6 +15,16 @@ from benchmarl.utils import DEVICE_TYPING
 
 
 class PettingZooClass(TaskClass):
+    """Task class for PettingZoo multi-agent environments.
+
+    PettingZoo is a library of diverse multi-agent environments following the Gym API.
+    This class provides integration for PettingZoo environments including MPE (Multi-Particle
+    Environment) scenarios and SISL environments like MultiWalker and Waterworld.
+
+    Supports both continuous and discrete actions depending on the specific environment.
+    Many environments provide global state information and action masks for invalid actions.
+    """
+
     def get_env_fun(
         self,
         num_envs: int,

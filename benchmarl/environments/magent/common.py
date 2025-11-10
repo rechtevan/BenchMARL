@@ -14,6 +14,16 @@ from benchmarl.utils import DEVICE_TYPING
 
 
 class MAgentClass(TaskClass):
+    """Task class for MAgent2 environments.
+
+    MAgent2 is a many-agent reinforcement learning platform that supports large-scale
+    multi-agent games with complex interactions. This class provides integration for
+    MAgent2 environments like adversarial pursuit, battle, and gather scenarios.
+
+    The environment uses discrete actions and provides state information along with
+    agent-specific observations. It supports heterogeneous agent groups and action masking.
+    """
+
     def get_env_fun(
         self,
         num_envs: int,

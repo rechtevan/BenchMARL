@@ -9,6 +9,24 @@ from dataclasses import MISSING, dataclass
 
 @dataclass
 class TaskConfig:
+    """Configuration for the VMAS Navigation task.
+
+    A cooperative navigation task where agents must reach goal landmarks while avoiding
+    collisions with each other. Can be configured with shared or individual goals and
+    rewards. Tests coordination and collision avoidance.
+
+    Attributes:
+        max_steps: Maximum number of environment steps per episode.
+        n_agents: Number of agents in the environment.
+        collisions: Whether collisions between agents are penalized.
+        agents_with_same_goal: Number of agents assigned to the same goal.
+        observe_all_goals: Whether agents can observe all goals or just their own.
+        shared_rew: Whether to use shared rewards across all agents.
+        split_goals: Whether goals are split among agents.
+        lidar_range: Range of lidar sensors for obstacle detection.
+        agent_radius: Physical radius of agents.
+    """
+
     max_steps: int = MISSING
     n_agents: int = MISSING
     collisions: bool = MISSING

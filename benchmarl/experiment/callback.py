@@ -11,6 +11,7 @@ from tensordict import TensorDictBase
 
 class Callback:
     """A Callback that can be added to experiments.
+
     To create your callback, you can inherit from this class
     and reimplement just the functions you need.
 
@@ -68,6 +69,21 @@ class Callback:
 
 
 class CallbackNotifier:
+    """Notifier for managing and executing experiment lifecycle callbacks.
+
+    This class coordinates the execution of multiple :class:`Callback` instances
+    at various points during the experiment lifecycle (setup, batch collection,
+    training steps, evaluation). It ensures all registered callbacks are invoked
+    in order and handles merging of TensorDict outputs when applicable.
+
+    Args:
+        experiment: The experiment instance these callbacks are attached to.
+        callbacks: List of callback instances to notify during experiment execution.
+
+    Attributes:
+        callbacks: List of registered callback instances.
+    """
+
     def __init__(self, experiment, callbacks: list[Callback]):
         self.callbacks = callbacks
         for callback in self.callbacks:
