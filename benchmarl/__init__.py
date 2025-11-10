@@ -12,7 +12,7 @@ it offers unified implementations of algorithms, environment wrappers, and
 neural network architectures.
 """
 
-__version__ = "1.5.0"
+__version__ = "1.5.1"
 
 import importlib
 
