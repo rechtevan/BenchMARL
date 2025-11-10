@@ -16,7 +16,7 @@ import warnings
 from collections import OrderedDict, deque
 from dataclasses import MISSING, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import torch
 from tensordict import TensorDictBase
@@ -69,9 +69,9 @@ class ExperimentConfig:
     gamma: float = MISSING
     lr: float = MISSING
     adam_eps: float = MISSING
-    adam_extra_kwargs: Dict[str, Any] = MISSING
+    adam_extra_kwargs: dict[str, Any] = MISSING
     clip_grad_norm: bool = MISSING
-    clip_grad_val: Optional[float] = MISSING
+    clip_grad_val: float | None = MISSING
 
     soft_target_update: bool = MISSING
     polyak_tau: float = MISSING
@@ -79,10 +79,10 @@ class ExperimentConfig:
 
     exploration_eps_init: float = MISSING
     exploration_eps_end: float = MISSING
-    exploration_anneal_frames: Optional[int] = MISSING
+    exploration_anneal_frames: int | None = MISSING
 
-    max_n_iters: Optional[int] = MISSING
-    max_n_frames: Optional[int] = MISSING
+    max_n_iters: int | None = MISSING
+    max_n_frames: int | None = MISSING
 
     on_policy_collected_frames_per_batch: int = MISSING
     on_policy_n_envs_per_worker: int = MISSING
@@ -106,17 +106,17 @@ class ExperimentConfig:
     evaluation_deterministic_actions: bool = MISSING
     evaluation_static: bool = MISSING
 
-    loggers: List[str] = MISSING
+    loggers: list[str] = MISSING
     project_name: str = MISSING
-    wandb_extra_kwargs: Dict[str, Any] = MISSING
+    wandb_extra_kwargs: dict[str, Any] = MISSING
     create_json: bool = MISSING
 
-    save_folder: Optional[str] = MISSING
-    restore_file: Optional[str] = MISSING
-    restore_map_location: Optional[Any] = MISSING
+    save_folder: str | None = MISSING
+    restore_file: str | None = MISSING
+    restore_map_location: Any | None = MISSING
     checkpoint_interval: int = MISSING
     checkpoint_at_end: bool = MISSING
-    keep_checkpoints_num: Optional[int] = MISSING
+    keep_checkpoints_num: int | None = MISSING
     exclude_buffer_from_checkpoint: bool = MISSING
 
     def train_batch_size(self, on_policy: bool) -> int:
@@ -243,7 +243,7 @@ class ExperimentConfig:
         )
 
     @staticmethod
-    def get_from_yaml(path: Optional[str] = None):
+    def get_from_yaml(path: str | None = None):
         """Load the experiment configuration from yaml
 
         Args:
@@ -297,7 +297,8 @@ class ExperimentConfig:
         if self.max_n_frames is not None and self.max_n_iters is not None:
             warnings.warn(
                 f"max_n_frames and max_n_iters have both been set. The experiment will terminate after "
-                f"{self.get_max_n_iters(on_policy)} iterations ({self.get_max_n_frames(on_policy)} frames)."
+                f"{self.get_max_n_iters(on_policy)} iterations ({self.get_max_n_frames(on_policy)} frames).",
+                stacklevel=2,
             )
 
 
@@ -320,13 +321,13 @@ class Experiment(CallbackNotifier):
 
     def __init__(
         self,
-        task: Union[Task, TaskClass],
+        task: Task | TaskClass,
         algorithm_config: AlgorithmConfig,
         model_config: ModelConfig,
         seed: int,
         config: ExperimentConfig,
-        critic_model_config: Optional[ModelConfig] = None,
-        callbacks: Optional[List[Callback]] = None,
+        critic_model_config: ModelConfig | None = None,
+        callbacks: list[Callback] | None = None,
     ):
         super().__init__(
             experiment=self, callbacks=callbacks if callbacks is not None else []
@@ -337,7 +338,8 @@ class Experiment(CallbackNotifier):
         if isinstance(task, Task):
             warnings.warn(
                 "Call `.get_task()` or `.get_from_yaml()` on your task Enum before passing it to the experiment. "
-                "If you do not do this, benchmarl will load the default task config from yaml."
+                "If you do not do this, benchmarl will load the default task config from yaml.",
+                stacklevel=2,
             )
             task = task.get_task()
         self.task = task
@@ -880,7 +882,8 @@ class Experiment(CallbackNotifier):
             except NotImplementedError:
                 warnings.warn(
                     "`experiment.evaluation_static` set to true but the environment does not allow to set seeds."
-                    "Static evaluation is not guaranteed."
+                    "Static evaluation is not guaranteed.",
+                    stacklevel=2,
                 )
         evaluation_start = time.time()
         with set_exploration_type(
@@ -958,7 +961,7 @@ class Experiment(CallbackNotifier):
             state_dict.update({"collector": self.collector.state_dict()})
         return state_dict
 
-    def load_state_dict(self, state_dict: Dict) -> None:
+    def load_state_dict(self, state_dict: dict) -> None:
         """Load the state_dict for the experiment.
 
         Args:
@@ -1001,7 +1004,7 @@ class Experiment(CallbackNotifier):
 
     @staticmethod
     def reload_from_file(
-        restore_file: str, experiment_patch: Optional[Dict[str, Any]] = None
+        restore_file: str, experiment_patch: dict[str, Any] | None = None
     ) -> Experiment:
         """Restores the experiment from the checkpoint file.
 

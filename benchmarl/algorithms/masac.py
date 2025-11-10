@@ -125,7 +125,8 @@ class Masac(Algorithm):
             if self.coupled_discrete_values and not self.share_param_critic:
                 warnings.warn(
                     "disabling share_param_critic in MASAC with discrete actions and coupled_discrete_values has not effect"
-                    "as the critic is already able to predict different values for different agents."
+                    "as the critic is already able to predict different values for different agents.",
+                    stacklevel=2,
                 )
             loss_module = DiscreteSACLoss(
                 actor_network=policy_for_loss,

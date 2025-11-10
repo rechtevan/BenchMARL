@@ -112,6 +112,70 @@ BenchMARL uses a comprehensive suite of code quality tools to maintain high stan
 - Development tools can use other open-source licenses
 - Verify licenses before adding new dependencies
 
+## Documentation Standards
+
+BenchMARL follows Google-style docstrings for all Python code, enforced through Ruff's pydocstyle checks.
+
+**Current documentation coverage: 25.7%** (Target: 80%)
+
+- Module-level docstrings: 0% (0/85) - **Priority: High**
+- Class docstrings: 48.6% (51/105) - **Priority: High**
+- Function docstrings: 73.3% (11/15) - **Priority: Medium**
+- Method docstrings: 22.9% (75/328) - **Priority: Medium**
+
+**Docstring format (Google style):**
+
+```python
+def get_loss_and_updater(self, group: str) -> tuple[LossModule, TargetNetUpdater]:
+    """Get the LossModule and TargetNetUpdater for a specific group.
+
+    This function calls the abstract _get_loss() method which needs to be
+    implemented by subclasses. The function caches the output at the first
+    call and returns cached values in future calls.
+
+    Args:
+        group: Agent group name for the loss and updater.
+
+    Returns:
+        A tuple containing:
+            - LossModule for the group
+            - TargetNetUpdater for the group (or None if not using targets)
+
+    Raises:
+        KeyError: If the group is not found in the group_map.
+
+    Example:
+        Getting loss for a group::
+
+            loss, updater = algorithm.get_loss_and_updater("agents")
+            loss_vals = loss(batch)
+    """
+```
+
+**Required documentation:**
+
+- **Module-level**: One-line summary + extended description at top of every `.py` file
+- **Classes**: Purpose, args, attributes, and usage example for all public classes
+- **Functions/Methods**: Summary, args, returns, raises, and examples for public APIs
+- **Type hints**: All public functions and methods must have type annotations
+
+**Modern type annotations (PEP 604, PEP 585):**
+
+```python
+# ✅ Correct (Python 3.10+ style)
+def process(data: list[int] | None) -> dict[str, Any]: ...
+
+
+# ❌ Incorrect (old style - will fail Ruff checks)
+def process(data: Optional[List[int]]) -> Dict[str, Any]: ...
+```
+
+**Documentation enforcement:**
+
+- Ruff checks: D100, D101, D102, D103, D205, D415, D417
+- Pre-commit hooks fail on missing/malformed docstrings
+- See `.local/analysis/documentation_standards.md` for comprehensive guidelines
+
 ## CI/CD & Security
 
 BenchMARL maintains robust continuous integration and security practices.

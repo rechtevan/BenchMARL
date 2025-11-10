@@ -45,7 +45,7 @@ class MAgentClass(TaskClass):
         except ImportError:
             raise ImportError(
                 "Module `magent2` not found, install it using `pip install magent2`"
-            )
+            ) from None
 
         envs = {
             "ADVERSARIAL_PURSUIT": adversarial_pursuit_v4,

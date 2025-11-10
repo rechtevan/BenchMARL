@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 from dataclasses import MISSING, dataclass
-from typing import Optional, Sequence, Type
+from typing import Sequence
 
 import torch
 import torch.nn.functional as F
@@ -512,12 +512,12 @@ class LstmConfig(ModelConfig):
     compile: bool = MISSING
 
     mlp_num_cells: Sequence[int] = MISSING
-    mlp_layer_class: Type[nn.Module] = MISSING
-    mlp_activation_class: Type[nn.Module] = MISSING
+    mlp_layer_class: type[nn.Module] = MISSING
+    mlp_activation_class: type[nn.Module] = MISSING
 
-    mlp_activation_kwargs: Optional[dict] = None
-    mlp_norm_class: Type[nn.Module] = None
-    mlp_norm_kwargs: Optional[dict] = None
+    mlp_activation_kwargs: dict | None = None
+    mlp_norm_class: type[nn.Module] = None
+    mlp_norm_kwargs: dict | None = None
 
     @staticmethod
     def associated_class():

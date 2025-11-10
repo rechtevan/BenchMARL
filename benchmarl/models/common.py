@@ -177,7 +177,8 @@ class Model(TensorDictModuleBase, ABC):
         ):
             warnings.warn(
                 "Sharing parameters with models that are not identical. "
-                "This might result in unintended behavior or error."
+                "This might result in unintended behavior or error.",
+                stacklevel=2,
             )
         for param, other_param in zip(self.parameters(), other_model.parameters()):
             other_param.data[:] = param.data

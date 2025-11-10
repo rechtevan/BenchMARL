@@ -122,7 +122,8 @@ class Logger:
             warnings.warn(
                 "No episode terminated this iteration and thus the episode rewards will be NaN, "
                 "this is normal if your horizon is longer then one iteration. Learning is proceeding fine."
-                "The episodes will probably terminate in a future iteration."
+                "The episodes will probably terminate in a future iteration.",
+                stacklevel=2,
             )
         for group in self.group_map.keys():
             group_episode_rewards = self._log_individual_and_group_rewards(

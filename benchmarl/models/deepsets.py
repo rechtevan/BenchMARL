@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 from dataclasses import MISSING, dataclass
-from typing import Optional, Sequence, Type
+from typing import Sequence
 
 import torch
 from tensordict import TensorDictBase
@@ -68,10 +68,10 @@ class Deepsets(Model):
         self,
         aggr: str,
         local_nn_num_cells: Sequence[int],
-        local_nn_activation_class: Type[nn.Module],
+        local_nn_activation_class: type[nn.Module],
         out_features_local_nn: int,
         global_nn_num_cells: Sequence[int],
-        global_nn_activation_class: Type[nn.Module],
+        global_nn_activation_class: type[nn.Module],
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -148,9 +148,9 @@ class Deepsets(Model):
         out_features: int,
         aggr: str,
         local_nn_num_cells: Sequence[int],
-        local_nn_activation_class: Type[nn.Module],
+        local_nn_activation_class: type[nn.Module],
         global_nn_num_cells: Sequence[int],
-        global_nn_activation_class: Type[nn.Module],
+        global_nn_activation_class: type[nn.Module],
         out_features_local_nn: int,
         in_fetures_global_nn: int,
     ) -> _DeepsetsNet:
@@ -333,7 +333,7 @@ class _DeepsetsNet(nn.Module):
         self.local_nn = local_nn
         self.global_nn = global_nn
 
-    def forward(self, x: Tensor, extra_global_input: Optional[Tensor]) -> Tensor:
+    def forward(self, x: Tensor, extra_global_input: Tensor | None) -> Tensor:
         x = self.local_nn(x)
         x = self.reduce(x, dim=self.set_dim, aggr=self.aggr)
         if extra_global_input is not None:
@@ -363,10 +363,10 @@ class DeepsetsConfig(ModelConfig):
     out_features_local_nn: int = MISSING
 
     local_nn_num_cells: Sequence[int] = MISSING
-    local_nn_activation_class: Type[nn.Module] = MISSING
+    local_nn_activation_class: type[nn.Module] = MISSING
 
     global_nn_num_cells: Sequence[int] = MISSING
-    global_nn_activation_class: Type[nn.Module] = MISSING
+    global_nn_activation_class: type[nn.Module] = MISSING
 
     @staticmethod
     def associated_class():
