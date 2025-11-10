@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Optional, Sequence, Type
 
 import torch

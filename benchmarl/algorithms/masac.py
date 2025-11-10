@@ -4,7 +4,7 @@
 #  LICENSE file in the root directory of this source tree.
 #
 import warnings
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Dict, Iterable, Optional, Tuple, Type, Union
 
 import torch
@@ -487,7 +487,6 @@ class Masac(Algorithm):
             )
 
         if self.state_spec is not None:
-
             modules.append(
                 TensorDictModule(
                     lambda action: action.reshape(*action.shape[:-2], -1),

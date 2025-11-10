@@ -10,8 +10,8 @@ from benchmarl.environments import VmasTask
 from benchmarl.experiment import ExperimentConfig
 from benchmarl.models.mlp import MlpConfig
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     # Loads from "benchmarl/conf/experiment/base_experiment.yaml"
     experiment_config = ExperimentConfig.get_from_yaml()
 

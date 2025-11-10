@@ -8,9 +8,9 @@ import os
 from pathlib import Path
 from typing import List
 
-from benchmarl.eval_results import load_and_merge_json_dicts, Plotting
-
 from matplotlib import pyplot as plt
+
+from benchmarl.eval_results import Plotting, load_and_merge_json_dicts
 
 
 def run_benchmark() -> List[str]:

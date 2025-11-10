@@ -6,12 +6,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Optional, Sequence, Type
 
 import torch
 from tensordict import TensorDictBase
-from torch import nn, Tensor
+from torch import Tensor, nn
 from torchrl.modules import MLP
 
 from benchmarl.models.common import Model, ModelConfig
@@ -74,7 +74,6 @@ class Deepsets(Model):
         global_nn_activation_class: Type[nn.Module],
         **kwargs,
     ):
-
         super().__init__(**kwargs)
         self.aggr = aggr
         self.local_nn_num_cells = local_nn_num_cells

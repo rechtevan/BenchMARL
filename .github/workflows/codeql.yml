@@ -1,0 +1,127 @@
+# CodeQL Security Scanning Workflow
+#
+# CodeQL is GitHub's semantic code analysis engine that helps discover vulnerabilities across a codebase.
+# It analyzes code to find security issues, bugs, and code quality problems by building a database
+# of the code structure and running security queries against it.
+#
+# This workflow performs automated security scanning on the BenchMARL codebase to:
+# - Detect common security vulnerabilities (SQL injection, XSS, command injection, etc.)
+# - Identify potential bugs and code quality issues
+# - Provide security insights in GitHub Security tab
+# - Block PRs with critical security findings (optional)
+#
+# For more information see:
+# https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors
+
+name: "CodeQL Security Scanning"
+
+on:
+  # Scan on push to main branch to catch security issues in production code
+  push:
+    branches: [ "main" ]
+
+  # Scan pull requests targeting main to prevent merging vulnerable code
+  pull_request:
+    branches: [ "main" ]
+
+  # Run weekly scans on Monday at 9:00 AM UTC to catch newly discovered vulnerabilities
+  # in dependencies and emerging security patterns
+  schedule:
+    - cron: '0 9 * * 1'
+
+  # Allow manual workflow dispatch from GitHub Actions tab
+  workflow_dispatch:
+
+permissions:
+  # Required to checkout the repository
+  contents: read
+
+  # Required to upload CodeQL results to GitHub Security tab
+  security-events: write
+
+  # Required for private repositories to analyze pull requests
+  actions: read
+
+jobs:
+  analyze:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Analyze multiple Python versions to ensure security across all supported versions
+        # Aligns with existing test matrix in unit_tests.yml
+        python-version: ["3.9", "3.11"]
+
+    steps:
+    # Step 1: Checkout the repository code
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Step 2: Set up Python environment
+    # CodeQL needs the proper Python version to analyze Python-specific patterns
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Step 3: Install Python dependencies
+    # CodeQL performs better analysis when dependencies are installed,
+    # allowing it to understand the full context of imports and library usage
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Install core dependencies without running full test suite installation
+        if [ -f setup.py ]; then
+          pip install -e .
+        fi
+        # Install common dependencies that might be needed for analysis
+        pip install torch torchrl tensordict || true
+
+    # Step 4: Initialize CodeQL
+    # Sets up the CodeQL tools and creates a database of the codebase for analysis
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        # Specify Python as the language to analyze
+        languages: python
+
+        # Use default CodeQL query suites
+        # 'default' includes: security-extended, security-and-quality
+        # You can also use: 'security-extended' or 'security-and-quality'
+        queries: security-and-quality
+
+        # Optional: Specify additional query packs
+        # packs: codeql/python-queries:AlertSuppression.ql
+
+    # Step 5: Autobuild
+    # CodeQL attempts to automatically build the codebase
+    # For Python, this typically involves discovering dependencies and structure
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    # Step 6: Perform CodeQL Analysis
+    # Runs security queries against the code database and uploads results
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        # Specify the category for multi-language/multi-matrix results organization
+        category: "/language:python/python:${{ matrix.python-version }}"
+
+        # Upload results to GitHub Security tab (Code Scanning Alerts)
+        upload: true
+
+        # Optional: Fail the workflow if vulnerabilities are found
+        # Uncomment the following line to block PRs with security issues
+        # fail-build: true
+
+    # Step 7: Upload CodeQL results as artifacts (optional)
+    # Useful for offline analysis or custom processing
+    - name: Upload CodeQL results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: codeql-results-python-${{ matrix.python-version }}
+        path: ../results
+        retention-days: 7

@@ -6,12 +6,13 @@
 
 from typing import List
 
+from tensordict import TensorDict, TensorDictBase
+
 from benchmarl.algorithms import MappoConfig
 from benchmarl.environments import VmasTask
 from benchmarl.experiment import Experiment, ExperimentConfig
 from benchmarl.experiment.callback import Callback
 from benchmarl.models.mlp import MlpConfig
-from tensordict import TensorDict, TensorDictBase
 
 
 class MyCallbackA(Callback):

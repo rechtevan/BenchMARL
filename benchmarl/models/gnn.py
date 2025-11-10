@@ -9,16 +9,17 @@ from __future__ import annotations
 import importlib
 import inspect
 import warnings
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from math import prod
 from typing import List, Optional, Type
 
 import torch
 from tensordict import TensorDictBase
-from tensordict.utils import _unravel_key_to_tuple, NestedKey
-from torch import nn, Tensor
+from tensordict.utils import NestedKey, _unravel_key_to_tuple
+from torch import Tensor, nn
 
 from benchmarl.models.common import Model, ModelConfig
+
 
 _has_torch_geometric = importlib.util.find_spec("torch_geometric") is not None
 if _has_torch_geometric:

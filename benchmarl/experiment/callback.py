@@ -12,8 +12,7 @@ from tensordict import TensorDictBase
 
 
 class Callback:
-    """
-    A Callback that can be added to experiments.
+    """A Callback that can be added to experiments.
     To create your callback, you can inherit from this class
     and reimplement just the functions you need.
 
@@ -29,8 +28,7 @@ class Callback:
         pass
 
     def on_batch_collected(self, batch: TensorDictBase):
-        """
-        A callback called at the end of every collection step.
+        """A callback called at the end of every collection step.
 
         Args:
             batch (TensorDictBase): batch of collected data
@@ -39,8 +37,7 @@ class Callback:
         pass
 
     def on_train_step(self, batch: TensorDictBase, group: str) -> TensorDictBase:
-        """
-        A callback called for every training step.
+        """A callback called for every training step.
 
         Args:
            batch (TensorDictBase): tensordict with the training batch
@@ -53,8 +50,7 @@ class Callback:
         pass
 
     def on_train_end(self, training_td: TensorDictBase, group: str):
-        """
-        A callback called at the end of training.
+        """A callback called at the end of training.
 
         Args:
             training_td (TensorDictBase): tensordict containing the loss values
@@ -64,8 +60,7 @@ class Callback:
         pass
 
     def on_evaluation_end(self, rollouts: List[TensorDictBase]):
-        """
-        A callback called at the end of every training step.
+        """A callback called at the end of every training step.
 
         Args:
             rollouts (list of TensorDictBase): tensordict containing the loss values

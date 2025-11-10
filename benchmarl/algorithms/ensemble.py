@@ -10,11 +10,9 @@ from typing import Dict, Iterable, Optional, Tuple, Type
 
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictModule
-
 from torchrl.objectives import LossModule
 
 from benchmarl.algorithms.common import Algorithm, AlgorithmConfig
-
 from benchmarl.models.common import ModelConfig
 
 
@@ -56,7 +54,6 @@ class EnsembleAlgorithm(Algorithm):
 
 @dataclass
 class EnsembleAlgorithmConfig(AlgorithmConfig):
-
     algorithm_configs_map: Dict[str, AlgorithmConfig]
 
     def __post_init__(self):

@@ -6,20 +6,19 @@
 
 
 import pytest
+from utils import _has_meltingpot
+from utils_experiment import ExperimentUtils
 
 from benchmarl.algorithms import (
-    algorithm_config_registry,
     IppoConfig,
     MappoConfig,
     MasacConfig,
     QmixConfig,
+    algorithm_config_registry,
 )
 from benchmarl.algorithms.common import AlgorithmConfig
 from benchmarl.environments import MeltingPotTask, Task
 from benchmarl.experiment import Experiment
-
-from utils import _has_meltingpot
-from utils_experiment import ExperimentUtils
 
 
 def _get_unique_envs(names):

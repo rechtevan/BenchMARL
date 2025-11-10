@@ -1,5 +1,10 @@
 ### Python template
 
+# AI-generated artifacts and local development files
+# This directory contains coverage reports, analysis outputs, and other
+# AI-generated artifacts that should not be committed to version control
+.local/
+
 # Hydra
 **/outputs/
 **/multirun/

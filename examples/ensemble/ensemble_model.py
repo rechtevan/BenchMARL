@@ -12,7 +12,6 @@ from benchmarl.models import EnsembleModelConfig, GnnConfig, MlpConfig
 
 
 if __name__ == "__main__":
-
     # Loads from "benchmarl/conf/experiment/base_experiment.yaml"
     experiment_config = ExperimentConfig.get_from_yaml()
 

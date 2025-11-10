@@ -30,5 +30,5 @@ model_config = EnsembleModelConfig(
 )
 ```
 
-**Important: if you use ensemble models with sequence models, make sure the ensemble is the outer layer (you cannot make a
-sequence of ensembles, but an ensemble of sequences yes).**
+**Important: if you use ensemble models with sequence models, make sure the ensemble is the outer layer (you cannot make
+a sequence of ensembles, but an ensemble of sequences yes).**

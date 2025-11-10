@@ -14,7 +14,6 @@ from benchmarl.models.mlp import MlpConfig
 
 
 if __name__ == "__main__":
-
     model_config = SequenceModelConfig(
         model_configs=[
             MlpConfig.get_from_yaml(),  # Loads from "benchmarl/conf/model/layers/mlp.yaml"

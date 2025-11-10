@@ -4,14 +4,13 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import List, Optional, Sequence, Tuple, Type, Union
 
 import torch
-
 from tensordict import TensorDictBase
 from torch import nn
-from torchrl.modules import ConvNet, MLP, MultiAgentConvNet, MultiAgentMLP
+from torchrl.modules import MLP, ConvNet, MultiAgentConvNet, MultiAgentMLP
 
 from benchmarl.models.common import Model, ModelConfig
 

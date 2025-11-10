@@ -14,6 +14,7 @@ import yaml
 from torchrl.data import Composite
 from torchrl.envs import Compose, EnvBase, InitTracker, TensorDictPrimer, TransformedEnv
 
+
 if typing.TYPE_CHECKING:
     from benchmarl.models import ModelConfig
 
@@ -82,8 +83,7 @@ def _add_rnn_transforms(
     group_map: Dict[str, List[str]],
     model_config: "ModelConfig",
 ) -> Callable[[], EnvBase]:
-    """
-    This function adds RNN specific transforms to the environment
+    """This function adds RNN specific transforms to the environment
 
     Args:
         env_fun (callable): a function that takes no args and creates an environment
@@ -101,7 +101,7 @@ def _add_rnn_transforms(
                 group: Composite(
                     model_config._get_model_state_spec_inner(group=group).expand(
                         len(agents),
-                        *model_config._get_model_state_spec_inner(group=group).shape
+                        *model_config._get_model_state_spec_inner(group=group).shape,
                     ),
                     shape=(len(agents),),
                 )

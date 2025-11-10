@@ -18,6 +18,7 @@ from .gru import Gru, GruConfig
 from .lstm import Lstm, LstmConfig
 from .mlp import Mlp, MlpConfig
 
+
 classes = [
     "Mlp",
     "MlpConfig",

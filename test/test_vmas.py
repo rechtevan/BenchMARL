@@ -5,8 +5,11 @@
 #
 
 import pytest
+from torch import nn
+from utils import _has_vmas
+from utils_experiment import ExperimentUtils
+
 from benchmarl.algorithms import (
-    algorithm_config_registry,
     IddpgConfig,
     IppoConfig,
     IsacConfig,
@@ -14,14 +17,12 @@ from benchmarl.algorithms import (
     MappoConfig,
     MasacConfig,
     QmixConfig,
+    algorithm_config_registry,
 )
 from benchmarl.algorithms.common import AlgorithmConfig
 from benchmarl.environments import Task, VmasTask
 from benchmarl.experiment import Experiment
 from benchmarl.models import MlpConfig
-from torch import nn
-from utils import _has_vmas
-from utils_experiment import ExperimentUtils
 
 
 @pytest.mark.skipif(not _has_vmas, reason="VMAS not found")

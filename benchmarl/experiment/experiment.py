@@ -8,23 +8,20 @@ from __future__ import annotations
 
 import copy
 import importlib
-
 import os
 import pickle
 import shutil
 import time
 import warnings
-from collections import deque, OrderedDict
-from dataclasses import dataclass, MISSING
+from collections import OrderedDict, deque
+from dataclasses import MISSING, dataclass
 from pathlib import Path
-
 from typing import Any, Dict, List, Optional, Union
 
 import torch
 from tensordict import TensorDictBase
 from tensordict.nn import TensorDictSequential
 from torchrl.collectors import SyncDataCollector
-
 from torchrl.envs import ParallelEnv, SerialEnv, TransformedEnv
 from torchrl.envs.transforms import Compose
 from torchrl.envs.utils import ExplorationType, set_exploration_type, step_mdp
@@ -32,7 +29,6 @@ from torchrl.record.loggers import generate_exp_name
 from tqdm import tqdm
 
 from benchmarl.algorithms import IppoConfig, MappoConfig
-
 from benchmarl.algorithms.common import AlgorithmConfig
 from benchmarl.environments import Task, TaskClass
 from benchmarl.experiment.callback import Callback, CallbackNotifier
@@ -46,6 +42,7 @@ from benchmarl.utils import (
     seed_everything,
 )
 
+
 _has_hydra = importlib.util.find_spec("hydra") is not None
 if _has_hydra:
     from hydra.core.hydra_config import HydraConfig
@@ -53,8 +50,7 @@ if _has_hydra:
 
 @dataclass
 class ExperimentConfig:
-    """
-    Configuration class for experiments.
+    """Configuration class for experiments.
     This class acts as a schema for loading and validating yaml configurations.
 
     Parameters in this class aim to be agnostic of the algorithm, task or model used.
@@ -124,8 +120,7 @@ class ExperimentConfig:
     exclude_buffer_from_checkpoint: bool = MISSING
 
     def train_batch_size(self, on_policy: bool) -> int:
-        """
-        The batch size of tensors used for training
+        """The batch size of tensors used for training
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -138,8 +133,7 @@ class ExperimentConfig:
         )
 
     def train_minibatch_size(self, on_policy: bool) -> int:
-        """
-        The minibatch size of tensors used for training.
+        """The minibatch size of tensors used for training.
         On-policy algorithms are trained by splitting the train_batch_size (equal to the collected frames) into minibatches.
         Off-policy algorithms do not go through this process and thus have the ``train_minibatch_size==train_batch_size``
 
@@ -153,8 +147,7 @@ class ExperimentConfig:
         )
 
     def n_optimizer_steps(self, on_policy: bool) -> int:
-        """
-        Number of times to loop over the training step per collection iteration.
+        """Number of times to loop over the training step per collection iteration.
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -167,8 +160,7 @@ class ExperimentConfig:
         )
 
     def replay_buffer_memory_size(self, on_policy: bool) -> int:
-        """
-        Size of the replay buffer memory in terms of frames
+        """Size of the replay buffer memory in terms of frames
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -181,10 +173,9 @@ class ExperimentConfig:
         )
 
     def collected_frames_per_batch(self, on_policy: bool) -> int:
-        """
-        Number of collected frames per collection iteration.
+        """Number of collected frames per collection iteration.
 
-         Args:
+        Args:
              on_policy (bool): is the algorithms on_policy
 
         """
@@ -195,8 +186,7 @@ class ExperimentConfig:
         )
 
     def n_envs_per_worker(self, on_policy: bool) -> int:
-        """
-        Number of environments used for collection
+        """Number of environments used for collection
 
         - In vectorized environments, this will be the vectorized batch_size.
         - In other environments, this will be emulated by running them sequentially.
@@ -213,8 +203,7 @@ class ExperimentConfig:
         )
 
     def get_max_n_frames(self, on_policy: bool) -> int:
-        """
-        Get the maximum number of frames collected before the experiment ends.
+        """Get the maximum number of frames collected before the experiment ends.
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -230,8 +219,7 @@ class ExperimentConfig:
             return self.max_n_iters * self.collected_frames_per_batch(on_policy)
 
     def get_max_n_iters(self, on_policy: bool) -> int:
-        """
-        Get the maximum number of experiment iterations before the experiment ends.
+        """Get the maximum number of experiment iterations before the experiment ends.
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -242,8 +230,7 @@ class ExperimentConfig:
         )
 
     def get_exploration_anneal_frames(self, on_policy: bool):
-        """
-        Get the number of frames for exploration annealing.
+        """Get the number of frames for exploration annealing.
         If self.exploration_anneal_frames is None this will be a third of the total frames to collect.
 
         Args:
@@ -257,8 +244,7 @@ class ExperimentConfig:
 
     @staticmethod
     def get_from_yaml(path: Optional[str] = None):
-        """
-        Load the experiment configuration from yaml
+        """Load the experiment configuration from yaml
 
         Args:
             path (str, optional): The full path of the yaml file to load from.
@@ -280,8 +266,7 @@ class ExperimentConfig:
             return ExperimentConfig(**_read_yaml_config(path))
 
     def validate(self, on_policy: bool):
-        """
-        Validates config.
+        """Validates config.
 
         Args:
             on_policy (bool): is the algorithms on_policy
@@ -317,8 +302,7 @@ class ExperimentConfig:
 
 
 class Experiment(CallbackNotifier):
-    """
-    Main experiment class in BenchMARL.
+    """Main experiment class in BenchMARL.
 
     Args:
         task (TaskClass): the task
@@ -1019,8 +1003,7 @@ class Experiment(CallbackNotifier):
     def reload_from_file(
         restore_file: str, experiment_patch: Optional[Dict[str, Any]] = None
     ) -> Experiment:
-        """
-        Restores the experiment from the checkpoint file.
+        """Restores the experiment from the checkpoint file.
 
         This method expects the same folder structure created when an experiment is run.
         The checkpoint file (``restore_file``) is in the checkpoints directory and a config.pkl file is

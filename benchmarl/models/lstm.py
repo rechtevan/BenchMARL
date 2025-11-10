@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, MISSING
+from dataclasses import MISSING, dataclass
 from typing import Optional, Sequence, Type
 
 import torch
@@ -15,8 +15,7 @@ from tensordict import TensorDict, TensorDictBase
 from tensordict.utils import expand_as_right, unravel_key_list
 from torch import nn
 from torchrl.data.tensor_specs import Composite, Unbounded
-
-from torchrl.modules import LSTMCell, MLP, MultiAgentMLP
+from torchrl.modules import MLP, LSTMCell, MultiAgentMLP
 
 from benchmarl.models.common import Model, ModelConfig
 from benchmarl.utils import DEVICE_TYPING
@@ -178,9 +177,7 @@ class MultiAgentLSTM(torch.nn.Module):
             c_0 = c_0.unsqueeze(0)
             is_init = is_init.unsqueeze(0)
 
-        if (
-            not training
-        ):  # In collection we emulate the sequence dimension and we have the hidden state
+        if not training:  # In collection we emulate the sequence dimension and we have the hidden state
             input = input.unsqueeze(1)
 
         # Check input
@@ -312,7 +309,6 @@ class Lstm(Model):
         compile: bool,
         **kwargs,
     ):
-
         super().__init__(
             input_spec=kwargs.pop("input_spec"),
             output_spec=kwargs.pop("output_spec"),

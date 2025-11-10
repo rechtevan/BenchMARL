@@ -1,6 +1,8 @@
 # Using Weights & Biases (W&B) Sweeps with BenchMARL
 
-You can improve the performance of your RL agents with hyperparameter tuning. It's easy to train multiple models with different hyperparameters using hyperparameter sweep on W&B with BenchMARL and Hydra. Modify `sweepconfig.yaml` to define your sweep configuration and run it from the command line.
+You can improve the performance of your RL agents with hyperparameter tuning. It's easy to train multiple models with
+different hyperparameters using hyperparameter sweep on W&B with BenchMARL and Hydra. Modify `sweepconfig.yaml` to
+define your sweep configuration and run it from the command line.
 
 ## Prerequisites
 
@@ -22,11 +24,15 @@ seed: 0
 
 ## Step 1: Define Your Sweep Configuration
 
-First, create or modify the `sweepconfig.yaml` file. Check the [W&B Sweep Configuration Documentation](https://docs.wandb.ai/guides/sweeps/sweep-config-keys) for detailed configuration options.
+First, create or modify the `sweepconfig.yaml` file. Check the
+[W&B Sweep Configuration Documentation](https://docs.wandb.ai/guides/sweeps/sweep-config-keys) for detailed
+configuration options.
 
-
-The YAML file already contains the basic elements required to work with BenchMARL. Change the values according to your desired experiment setup. Note that the parameters in the YAML file should use dots (e.g., `experiment.lr`) rather than standard double nested configurations ([like in this community discussion](https://community.wandb.ai/t/nested-sweep-configuration/3369)) since you are using Hydra.
-
+The YAML file already contains the basic elements required to work with BenchMARL. Change the values according to your
+desired experiment setup. Note that the parameters in the YAML file should use dots (e.g., `experiment.lr`) rather than
+standard double nested configurations
+([like in this community discussion](https://community.wandb.ai/t/nested-sweep-configuration/3369)) since you are using
+Hydra.
 
 ```yaml
 entity: "ENTITY_NAME"
@@ -66,6 +72,7 @@ wandb: Run sweep agent with: wandb agent your_entity/your_project/xyz123
 ```
 
 ## Step 3: Start sweep agents
+
 Run the command provided in the terminal to start the sweep agent:
 
 ```bash
