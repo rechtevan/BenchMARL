@@ -523,7 +523,9 @@ class JsonWriter:
         # Store the maximum of each metric
         for metric_name in metrics.keys():
             if len(metrics[metric_name]):
-                max_metric = max(metrics[metric_name])
+                max_metric = max(
+                    metrics[metric_name]
+                ).item()  # Convert Tensor to Python scalar
                 if metric_name in self.run_data["absolute_metrics"]:
                     prev_max_metric = self.run_data["absolute_metrics"][metric_name][0]
                     max_metric = max(max_metric, prev_max_metric)
