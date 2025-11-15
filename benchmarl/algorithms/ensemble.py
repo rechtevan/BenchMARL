@@ -229,55 +229,60 @@ class EnsembleAlgorithmConfig(AlgorithmConfig):
         """
         return EnsembleAlgorithm
 
-    def on_policy(self) -> bool:
+    def on_policy(self) -> bool:  # type: ignore[override]
         """Check if the ensemble algorithm is on-policy.
 
         Returns:
             True if all constituent algorithms are on-policy, False otherwise.
         """
         # Return cached value from __post_init__
+        # Note: Must be instance method to access self._on_policy
         return self._on_policy
 
-    def supports_continuous_actions(self) -> bool:
+    def supports_continuous_actions(self) -> bool:  # type: ignore[override]
         """Check if all algorithms in the ensemble support continuous actions.
 
         Returns:
             True if all constituent algorithms support continuous actions, False otherwise.
         """
+        # Must be instance method to access algorithm_configs_map
         algorithm_configs = list(self.algorithm_configs_map.values())
         return all(
             algo_config.supports_continuous_actions()
             for algo_config in algorithm_configs
         )
 
-    def supports_discrete_actions(self) -> bool:
+    def supports_discrete_actions(self) -> bool:  # type: ignore[override]
         """Check if all algorithms in the ensemble support discrete actions.
 
         Returns:
             True if all constituent algorithms support discrete actions, False otherwise.
         """
+        # Must be instance method to access algorithm_configs_map
         algorithm_configs = list(self.algorithm_configs_map.values())
         return all(
             algo_config.supports_discrete_actions() for algo_config in algorithm_configs
         )
 
-    def has_independent_critic(self) -> bool:
+    def has_independent_critic(self) -> bool:  # type: ignore[override]
         """Check if any algorithm in the ensemble has an independent critic.
 
         Returns:
             True if at least one constituent algorithm has an independent critic, False otherwise.
         """
+        # Must be instance method to access algorithm_configs_map
         algorithm_configs = list(self.algorithm_configs_map.values())
         return any(
             algo_config.has_independent_critic() for algo_config in algorithm_configs
         )
 
-    def has_centralized_critic(self) -> bool:
+    def has_centralized_critic(self) -> bool:  # type: ignore[override]
         """Check if any algorithm in the ensemble has a centralized critic.
 
         Returns:
             True if at least one constituent algorithm has a centralized critic, False otherwise.
         """
+        # Must be instance method to access algorithm_configs_map
         algorithm_configs = list(self.algorithm_configs_map.values())
         return any(
             algo_config.has_centralized_critic() for algo_config in algorithm_configs
