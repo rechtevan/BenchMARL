@@ -1,0 +1,8 @@
+# markdownlint configuration
+# See: https://github.com/DavidAnson/markdownlint-cli2
+
+# Disable line-length rule (MD013) as it's too restrictive for technical documentation
+config:
+  MD013: false  # Line length - allow longer lines for code examples and URLs
+  MD034: false  # Bare URLs - allow bare URLs in documentation
+  MD036: false  # Emphasis as heading - allow emphasis styling
