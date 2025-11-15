@@ -64,7 +64,7 @@ class PettingZooClass(TaskClass):
         Returns:
             True if continuous actions are supported, False otherwise.
         """
-        if self.name in {
+        return self.name in {
             "MULTIWALKER",
             "WATERWORLD",
             "SIMPLE_ADVERSARY",
@@ -75,9 +75,7 @@ class PettingZooClass(TaskClass):
             "SIMPLE_SPREAD",
             "SIMPLE_TAG",
             "SIMPLE_WORLD_COMM",
-        }:
-            return True
-        return False
+        }
 
     def supports_discrete_actions(self) -> bool:
         """Check if environment supports discrete actions.
@@ -85,7 +83,7 @@ class PettingZooClass(TaskClass):
         Returns:
             True if discrete actions are supported, False otherwise.
         """
-        if self.name in {
+        return self.name in {
             "SIMPLE_ADVERSARY",
             "SIMPLE_CRYPTO",
             "SIMPLE_PUSH",
@@ -94,9 +92,7 @@ class PettingZooClass(TaskClass):
             "SIMPLE_SPREAD",
             "SIMPLE_TAG",
             "SIMPLE_WORLD_COMM",
-        }:
-            return True
-        return False
+        }
 
     def has_state(self) -> bool:
         """Check has state.
@@ -104,7 +100,7 @@ class PettingZooClass(TaskClass):
         Returns:
             Boolean indicating the result.
         """
-        if self.name in {
+        return self.name in {
             "SIMPLE_ADVERSARY",
             "SIMPLE_CRYPTO",
             "SIMPLE_PUSH",
@@ -113,9 +109,7 @@ class PettingZooClass(TaskClass):
             "SIMPLE_SPREAD",
             "SIMPLE_TAG",
             "SIMPLE_WORLD_COMM",
-        }:
-            return True
-        return False
+        }
 
     def has_render(self, env: EnvBase) -> bool:
         """Check if environment supports rendering.

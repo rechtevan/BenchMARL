@@ -56,10 +56,7 @@ def output_has_agent_dim(share_params: bool, centralised: bool) -> bool:
     and the dimension should be absent otherwise.
 
     """
-    if share_params and centralised:
-        return False
-    else:
-        return True
+    return not (share_params and centralised)
 
 
 class Model(TensorDictModuleBase, ABC):

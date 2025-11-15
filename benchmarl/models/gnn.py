@@ -402,7 +402,7 @@ class Gnn(Model):
             if (
                 k_tuple[-1] == key
                 and self.agent_group in k_tuple
-                and not "next" == k_tuple[0]
+                and not k_tuple[0] == "next"
             ):
                 return k
         raise KeyError(

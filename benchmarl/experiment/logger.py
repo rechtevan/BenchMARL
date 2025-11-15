@@ -521,7 +521,7 @@ class JsonWriter:
             self.run_data[step_str] = step_metrics
 
         # Store the maximum of each metric
-        for metric_name in metrics.keys():
+        for metric_name in metrics:
             if len(metrics[metric_name]):
                 max_metric = max(
                     metrics[metric_name]
