@@ -1,0 +1,5 @@
+# Ignore markdown lint errors in examples and documentation
+examples/
+fine_tuned/
+CONTRIBUTORS.md
+.local/
