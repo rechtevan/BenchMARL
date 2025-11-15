@@ -59,6 +59,8 @@ ignore = [
 "__init__.py" = ["F401", "F403", "F405"]
 "test_*.py" = ["F841", "E731", "E266", "D"]
 "test/*.py" = ["F841", "E731", "E266", "D"]
+"examples/**/*.py" = ["D"]
+"docs/**/*.py" = ["D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
