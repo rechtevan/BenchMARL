@@ -1,8 +1,15 @@
 # markdownlint configuration
 # See: https://github.com/DavidAnson/markdownlint-cli2
 
-# Disable line-length rule (MD013) as it's too restrictive for technical documentation
+# Disable overly strict rules for technical documentation
 config:
+  MD001: false  # Heading levels - allow skipping heading levels for formatting
   MD013: false  # Line length - allow longer lines for code examples and URLs
+  MD025: false  # Multiple H1 headings - allow in documentation sections
+  MD029: false  # Ordered list numbering - allow any numbering style
+  MD033: false  # Inline HTML - allow for images and formatting
   MD034: false  # Bare URLs - allow bare URLs in documentation
   MD036: false  # Emphasis as heading - allow emphasis styling
+  MD040: false  # Fenced code language - allow code blocks without language
+  MD041: false  # First line heading - allow images/badges before heading
+  MD045: false  # Alt text for images - optional for technical diagrams
