@@ -30,8 +30,11 @@ repos:
     hooks:
       - id: mypy
         types: [python]
-        args: [--ignore-missing-imports, --no-strict-optional]
+        args: [--ignore-missing-imports, --no-strict-optional, --no-error-summary, --no-warn-unreachable]
         additional_dependencies: []
+        # Note: MyPy in pre-commit runs in isolation without project dependencies
+        # For full type checking, run: mypy benchmarl/
+        # This hook provides basic checks only
 
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.21

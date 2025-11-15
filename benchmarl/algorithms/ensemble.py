@@ -154,6 +154,11 @@ class EnsembleAlgorithmConfig(AlgorithmConfig):
     algorithm_configs_map: Dict[str, AlgorithmConfig]
 
     def __post_init__(self):
+        """Validate ensemble configuration after dataclass initialization.
+
+        Ensures all algorithms in the ensemble are either on-policy or off-policy
+        (not mixed), and that at least one algorithm supports the action space type.
+        """
         algorithm_configs = list(self.algorithm_configs_map.values())
         self._on_policy = algorithm_configs[0].on_policy()
 

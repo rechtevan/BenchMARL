@@ -14,7 +14,7 @@ import warnings
 from abc import abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 from tensordict import TensorDictBase
 from torch import Tensor
@@ -69,7 +69,7 @@ class TaskClass(abc.ABC):
 
     """
 
-    def __init__(self, name: str, config: Optional[dict[str, Any]]):
+    def __init__(self, name: str, config: dict[str, Any] | None):
         """Initialize the TaskClass.
 
         Parameters are documented in the class docstring.
@@ -309,13 +309,16 @@ class TaskClass(abc.ABC):
             return env.render()
 
     def __repr__(self):
+        """Return string representation of the task."""
         cls_name = self.__class__.__name__
         return f"{cls_name}.{self.name}: (config={self.config})"
 
     def __str__(self):
+        """Return string representation of the task."""
         return self.__repr__()
 
     def __eq__(self, other):
+        """Check equality based on task name and configuration."""
         if not isinstance(other, self.__class__):
             return False
         return self.name == other.name and self.config == other.config

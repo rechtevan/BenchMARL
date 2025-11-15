@@ -4,6 +4,13 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Environment wrappers and task registries for MARL benchmarking.
+
+Provides unified interfaces to multiple MARL environments including VMAS,
+PettingZoo, SMAC v2, MeltingPot, and MAgent. Includes task enumeration,
+configuration, and automatic registry population for Hydra integration.
+"""
+
 from .common import Task, TaskClass, _get_task_config_class
 from .magent.common import MAgentClass, MAgentTask
 from .meltingpot.common import MeltingPotClass, MeltingPotTask

@@ -4,5 +4,11 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Experiment orchestration and training loop management.
+
+Provides the Experiment class for running MARL training runs with support for
+checkpointing, evaluation, callbacks, and logging to various backends.
+"""
+
 from .callback import Callback
 from .experiment import Experiment, ExperimentConfig

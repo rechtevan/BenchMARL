@@ -8,6 +8,7 @@ name = "benchmarl"
 description = "BenchMARL - Multi-Agent Reinforcement Learning Benchmark"
 readme = "README.md"
 license = {text = "MIT"}
+dynamic = ["version"]
 
 # Ruff configuration - replaces flake8, isort, and other tools
 [tool.ruff]

@@ -4,6 +4,13 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Neural network model architectures for MARL agents.
+
+Provides model implementations including MLP, GNN, CNN, RNN variants, and
+DeepSets. Supports parameter sharing, centralized training, and sequence
+composition for complex architectures.
+"""
+
 from .cnn import Cnn, CnnConfig
 from .common import (
     EnsembleModelConfig,

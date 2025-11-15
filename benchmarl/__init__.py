@@ -4,6 +4,13 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""BenchMARL: Multi-Agent Reinforcement Learning Training Library.
+
+BenchMARL provides a standardized interface for benchmarking different MARL
+algorithms and environments with reproducible configurations. Built on TorchRL,
+it offers unified implementations of algorithms, environment wrappers, and
+neural network architectures.
+"""
 
 __version__ = "1.5.0"
 

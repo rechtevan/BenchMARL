@@ -454,6 +454,11 @@ class SequenceModelConfig(ModelConfig):
     intermediate_sizes: Sequence[int]
 
     def __post_init__(self):
+        """Validate sequence configuration after dataclass initialization.
+
+        Ensures that SequenceModelConfig does not contain EnsembleModelConfig
+        layers, as nesting is only allowed in the opposite direction.
+        """
         for model_config in self.model_configs:
             if isinstance(model_config, EnsembleModelConfig):
                 raise TypeError(

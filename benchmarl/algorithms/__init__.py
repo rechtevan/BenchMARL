@@ -4,6 +4,13 @@
 #  LICENSE file in the root directory of this source tree.
 #
 
+"""Multi-Agent Reinforcement Learning algorithm implementations.
+
+Provides standardized MARL algorithms including MAPPO, QMIX, MADDPG, MASAC,
+and others. Each algorithm includes configuration dataclasses and loss modules
+compatible with TorchRL's training framework.
+"""
+
 from .common import Algorithm, AlgorithmConfig
 from .ensemble import EnsembleAlgorithm, EnsembleAlgorithmConfig
 from .iddpg import Iddpg, IddpgConfig
