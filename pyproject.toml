@@ -62,6 +62,7 @@ ignore = [
 "examples/**/*.py" = ["D", "UP006"]
 "docs/**/*.py" = ["D"]
 "fine_tuned/**/*.py" = ["D"]
+"setup.py" = ["D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
