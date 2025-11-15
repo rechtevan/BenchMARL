@@ -9,7 +9,7 @@
 from __future__ import annotations
 
 from dataclasses import MISSING, dataclass
-from typing import Any, Optional
+from typing import Any
 
 import torch
 import torch.nn.functional as F
@@ -629,7 +629,7 @@ class LstmConfig(ModelConfig):
     mlp_activation_class: Any = MISSING
 
     mlp_activation_kwargs: dict | None = None
-    mlp_norm_class: Optional[type[nn.Module]] = None
+    mlp_norm_class: type[nn.Module] | None = None
     mlp_norm_kwargs: dict | None = None
 
     @staticmethod

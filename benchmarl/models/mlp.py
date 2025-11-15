@@ -9,7 +9,7 @@
 from __future__ import annotations
 
 from dataclasses import MISSING, dataclass
-from typing import Any, Optional
+from typing import Any
 
 import torch
 from tensordict import TensorDictBase
@@ -170,7 +170,7 @@ class MlpConfig(ModelConfig):
     activation_class: Any = MISSING
     activation_kwargs: dict | None = None
 
-    norm_class: Optional[type[nn.Module]] = None
+    norm_class: type[nn.Module] | None = None
     norm_kwargs: dict | None = None
 
     num_feature_dims: int = 1
