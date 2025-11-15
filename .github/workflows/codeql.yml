@@ -117,11 +117,13 @@ jobs:
         # fail-build: true
 
     # Step 7: Upload CodeQL results as artifacts (optional)
-    # Useful for offline analysis or custom processing
-    - name: Upload CodeQL results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: codeql-results-python-${{ matrix.python-version }}
-        path: ../results
-        retention-days: 7
+    # Note: CodeQL results are automatically uploaded to GitHub Security tab
+    # This step is disabled as artifact upload path conflicts with CodeQL
+    # To view results, check the Security tab > Code scanning alerts
+    # - name: Upload CodeQL results
+    #   uses: actions/upload-artifact@v4
+    #   if: always()
+    #   with:
+    #     name: codeql-results-python-${{ matrix.python-version }}
+    #     path: codeql-results
+    #     retention-days: 7
