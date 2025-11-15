@@ -25,16 +25,15 @@ repos:
       - id: ruff-format
         types: [python]
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
-    hooks:
-      - id: mypy
-        types: [python]
-        args: [--ignore-missing-imports, --no-strict-optional, --no-error-summary, --no-warn-unreachable]
-        additional_dependencies: []
-        # Note: MyPy in pre-commit runs in isolation without project dependencies
-        # For full type checking, run: mypy benchmarl/
-        # This hook provides basic checks only
+  # MyPy disabled in pre-commit - runs in isolated environment without dependencies
+  # For type checking, run directly: mypy benchmarl/
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.13.0
+  #   hooks:
+  #     - id: mypy
+  #       types: [python]
+  #       args: [--ignore-missing-imports, --no-strict-optional]
+  #       additional_dependencies: []
 
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.21
